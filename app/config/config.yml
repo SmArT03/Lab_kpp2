@@ -1,0 +1,120 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: security.yml }
+    - { resource: services.yml }
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    locale: en
+
+framework:
+    #esi:             ~
+    #translator:      { fallbacks: ["%locale%"] }
+    secret:          "%secret%"
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+        strict_requirements: ~
+    form:            ~
+    csrf_protection: ~
+    validation:      { enable_annotations: true }
+    #serializer:      { enable_annotations: true }
+    assets:
+        packages:
+            admingenerator_css:
+              version: 1.0
+              version_format: "%%1$s?v%%2$s"
+            admingenerator_js:
+              version: 1.0
+              version_format: "%%1$s?v%%2$s"
+            formextensions_css:
+              version: 1.0
+              version_format: "%%1$s?v%%2$s"
+            formextensions_js:
+              version: 1.0
+              version_format: "%%1$s?v%%2$s"
+    templating:
+        engines: ['twig']
+    default_locale:  "%locale%"
+    trusted_hosts:   ~
+    trusted_proxies: ~
+    session:
+        # handler_id set to null will use default session handler from php.ini
+        handler_id:  ~
+    fragments:       ~
+    http_method_override: true
+
+# Twig Configuration
+twig:
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
+
+# Assetic Configuration
+assetic:
+    debug:          "%kernel.debug%"
+    use_controller: false
+#    bundles:        [] # comment this line to include all bundles by default
+    filters:
+        cssrewrite: ~
+
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        driver:   pdo_mysql
+        host:     "%database_host%"
+        port:     "%database_port%"
+        dbname:   "%database_name%"
+        user:     "%database_user%"
+        password: "%database_password%"
+        charset:  UTF8
+        # if using pdo_sqlite as your database driver:
+        #   1. add the path in parameters.yml
+        #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
+        #   2. Uncomment database_path in parameters.yml.dist
+        #   3. Uncomment next line:
+        #     path:     "%database_path%"
+
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+
+# Swiftmailer Configuration
+swiftmailer:
+    transport: "%mailer_transport%"
+    host:      "%mailer_host%"
+    username:  "%mailer_user%"
+    password:  "%mailer_password%"
+    spool:     { type: memory }
+    
+    
+    
+admingenerator_generator:
+    # choose and enable at least one
+    use_propel:           false
+    use_doctrine_orm:     true
+    use_doctrine_odm:     false
+
+    # add this line if you want to use assetic
+    #base_admin_template: AdmingeneratorGeneratorBundle::base_uncompressed.html.twig
+    
+    
+admingenerator_form_extensions:
+    include_blueimp: true
+    include_momentjs: true
+    include_jqueryui: true
+    
+knp_menu:
+    twig:
+        template: "AdmingeneratorGeneratorBundle:KnpMenu:knp_menu_trans.html.twig"
+
+services:
+    app.demo_menu_builder:
+        class: Admingenerator\DashboardDemoBundle\Menu\DashboardMenuBuilder
+        arguments:
+            - "@knp_menu.factory"
+            - "@security.authorization_checker"
+            - "@request_stack"
+        tags:
+            - { name: "knp_menu.menu_builder", method: "navbarMenu", alias: "demo_navbar"}

@@ -1,0 +1,27 @@
+version: "2"
+
+services:
+    php:
+        image: nitra/php
+        volumes:
+            - .:/var/www
+ 
+    nginx:
+        image: nitra/nginx
+        ports:
+            - 8055:80
+        volumes_from:
+            - php:ro
+
+    mysql:
+        image: nitra/mariadb
+        environment:
+            MARIADB_PASS: admin
+            MARIADB_USER: admin
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - 8002:80
+        environment:
+            PMA_HOST: mysql
