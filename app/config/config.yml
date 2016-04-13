@@ -79,6 +79,10 @@ doctrine:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
+        filters:
+          softdeleteable:
+            class: Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
+            enabled: true
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -118,3 +122,17 @@ services:
             - "@request_stack"
         tags:
             - { name: "knp_menu.menu_builder", method: "navbarMenu", alias: "demo_navbar"}
+            
+
+
+stof_doctrine_extensions:
+    default_locale: en_EN
+    orm:
+        default:
+            # Activate the extensions you want
+            timestampable:          true
+            blameable:              true
+            softdeleteable:         true
+    class: 
+      softdeleteable: Gedmo\SoftDeleteable\SoftDeleteableListener
+        

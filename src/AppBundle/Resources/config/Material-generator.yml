@@ -17,6 +17,7 @@ builders:
             display: ~
             actions:
                 new: ~
+                excel: ~
             object_actions:
                 edit: ~
                 delete: ~
@@ -27,20 +28,20 @@ builders:
     new:
         params:
             title: New object for AppBundle
-            display: ~
+            display: [name, code]
             actions:
                 save: ~
                 list: ~
     edit:
         params:
-            title: "You're editing the object \"%object%\"|{ %object%: Material.title }|"
-            display: ~
+            title: "You're editing the object \"%object%\"|{ %object%: Material.name }|"
+            display: [name, code]
             actions:
                 save: ~
                 list: ~
     show:
         params:
-            title: "You're viewing the object \"%object%\"|{ %object%: Material.title }|"
+            title: "You're viewing the object \"%object%\"|{ %object%: Material.name }|"
             display: ~
             actions:
                 list: ~

@@ -9,9 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="Code")
  */
 class Code {
-    use \Gedmo\Timestampable\Traits\Timestampable, 
-        \Gedmo\SoftDeleteable\Traits\SoftDeleteable,
-        \Gedmo\Blameable\Traits\Blameable;
+    use \Gedmo\Timestampable\Traits\TimestampableEntity,
+        \Gedmo\Blameable\Traits\BlameableEntity,
+        \Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -25,6 +25,9 @@ class Code {
     private $name;
     
 
+    public function __toString() {
+        return $this->name;
+    }
     /**
      * Get id
      *

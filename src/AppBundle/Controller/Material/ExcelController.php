@@ -9,4 +9,5 @@ use Admingenerated\AppBundle\BaseMaterialController\ExcelController as BaseExcel
  */
 class ExcelController extends BaseExcelController
 {
+    
 }

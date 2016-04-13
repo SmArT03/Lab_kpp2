@@ -27,20 +27,20 @@ builders:
     new:
         params:
             title: New object for AppBundle
-            display: ~
+            display: [material,group, quantity, description]
             actions:
                 save: ~
                 list: ~
     edit:
         params:
-            title: "You're editing the object \"%object%\"|{ %object%: Consumption.title }|"
-            display: ~
+            title: "You're editing the object \"%object%\"|{ %object%: Consumption.description }|"
+            display: [material,group, quantity, description]
             actions:
                 save: ~
                 list: ~
     show:
         params:
-            title: "You're viewing the object \"%object%\"|{ %object%: Consumption.title }|"
+            title: "You're viewing the object \"%object%\"|{ %object%: Consumption.description }|"
             display: ~
             actions:
                 list: ~

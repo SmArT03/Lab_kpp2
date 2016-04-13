@@ -27,20 +27,20 @@ builders:
     new:
         params:
             title: New object for AppBundle
-            display: ~
+            display: [material, date, before, after]
             actions:
                 save: ~
                 list: ~
     edit:
         params:
-            title: "You're editing the object \"%object%\"|{ %object%: Inventory.title }|"
-            display: ~
+            title: "You're editing the object \"%object%\"|{ %object%: Inventory.date }|"
+            display: [material, date, before, after]
             actions:
                 save: ~
                 list: ~
     show:
         params:
-            title: "You're viewing the object \"%object%\"|{ %object%: Inventory.title }|"
+            title: "You're viewing the object \"%object%\"|{ %object%: Inventory.date }|"
             display: ~
             actions:
                 list: ~

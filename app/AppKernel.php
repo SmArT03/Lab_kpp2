@@ -16,13 +16,14 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),          
-            new \Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
+            new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new Admingenerator\GeneratorBundle\AdmingeneratorGeneratorBundle($this),
             new Admingenerator\FormBundle\AdmingeneratorFormBundle(),
             new Admingenerator\FormExtensionsBundle\AdmingeneratorFormExtensionsBundle(),
             new WhiteOctober\PagerfantaBundle\WhiteOctoberPagerfantaBundle(),
             new AppBundle\AppBundle(),
             new Knp\Bundle\MenuBundle\KnpMenuBundle(),
+            new Liuggio\ExcelBundle\LiuggioExcelBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {
