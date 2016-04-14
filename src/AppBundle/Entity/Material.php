@@ -4,10 +4,11 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * @ORM\Entity
  * @ORM\Table(name="Material")
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
 class Material {
     use \Gedmo\Timestampable\Traits\TimestampableEntity,

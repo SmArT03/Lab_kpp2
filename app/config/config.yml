@@ -132,7 +132,4 @@ stof_doctrine_extensions:
             # Activate the extensions you want
             timestampable:          true
             blameable:              true
-            softdeleteable:         true
-    class: 
-      softdeleteable: Gedmo\SoftDeleteable\SoftDeleteableListener
-        
+            softdeleteable:         true        
