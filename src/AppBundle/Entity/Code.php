@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="Code")
+ * @ORM\Table()
  */
 class Code {
     use \Gedmo\Timestampable\Traits\TimestampableEntity,

@@ -6,12 +6,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="Group")
+ * @ORM\Table(name="groups")
  */
 class Group {
+
     use \Gedmo\Timestampable\Traits\TimestampableEntity,
         \Gedmo\Blameable\Traits\BlameableEntity,
         \Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -23,17 +25,17 @@ class Group {
      * @ORM\Column(type="string", length=255, nullable=false)
      */
     private $name;
-    
-public function __toString() {
+
+    public function __toString() {
         return $this->name;
     }
+
     /**
      * Get id
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -43,8 +45,7 @@ public function __toString() {
      * @param string $name
      * @return Group
      */
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;
@@ -55,8 +56,8 @@ public function __toString() {
      *
      * @return string 
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
+
 }
