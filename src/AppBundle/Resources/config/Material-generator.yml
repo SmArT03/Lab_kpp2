@@ -13,8 +13,8 @@ params:
 builders:
     list:
         params:
-            title: List for AppBundle
-            display: ~
+            title: Material
+            display: [id, name, code, createdAt, updatedAt]
             actions:
                 new: ~
                 excel: ~
@@ -27,22 +27,22 @@ builders:
         filetype: ~
     new:
         params:
-            title: New object for AppBundle
+            title: New Material
             display: [name, code]
             actions:
                 save: ~
                 list: ~
     edit:
         params:
-            title: "You're editing the object \"%object%\"|{ %object%: Material.name }|"
+            title: "You're editing  \"%object%\"|{ %object%: Material.name }|"
             display: [name, code]
             actions:
                 save: ~
                 list: ~
     show:
         params:
-            title: "You're viewing the object \"%object%\"|{ %object%: Material.name }|"
-            display: ~
+            title: "You're viewing  \"%object%\"|{ %object%: Material.name }|"
+            display: [ name, code]
             actions:
                 list: ~
                 new: ~

@@ -23,12 +23,16 @@ class Receipt {
 
     /**
      * 
-     * @ORM\ManyToOne(targetEntity="Material")
+     * @ORM\ManyToOne(targetEntity="Material", inversedBy="receipts")
      * @ORM\JoinColumn(nullable=false)
      *
      */
     protected $material;
 
+    /**
+     * @ORM\Column(type="integer", nullable=false)
+     */
+    private $quantity;
     /**
      * @ORM\Column(type="decimal", precision=8, scale=2, nullable=false)
      */
@@ -39,6 +43,9 @@ class Receipt {
      */
     private $description;
 
+    public function __toString() {
+        return $this->description;
+    }
 
     /**
      * Get id
@@ -48,6 +55,28 @@ class Receipt {
     public function getId()
     {
         return $this->id;
+    }
+      /**
+     * Set quantity
+     *
+     * @param integer $quantity
+     * @return Consumption
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
+    /**
+     * Get quantity
+     *
+     * @return integer 
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
     }
 
     /**

@@ -9,7 +9,48 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
  * ExcelController
  */
 class ExcelController extends BaseExcelController {
-
+//
+//    public function excelAction(Request $request)
+//    {
+//        $this->request = $request;
+//            
+//        
+//        // Create the PHPExcel object with some standard values
+//        try {
+//          $phpexcel = $this->get('phpexcel');
+//        } catch (ServiceNotFoundException $e){
+//          throw new \Exception('You will need to enable the PHPExcel bundle for this function to work.', null, $e);
+//        }
+//
+//        $phpExcelObject = $phpexcel->createPHPExcelObject();
+//        $this->createExcelObject($phpExcelObject);
+//        $sheet = $phpExcelObject->setActiveSheetIndex(0);
+//
+//        // Create the first bold row in the Excel spreadsheet
+//        $this->createExcelHeader($sheet);
+//
+//        // Print the data
+//        $this->createExcelData($sheet);
+//
+//        // Create the Writer, Response and add header
+//        $writer = $phpexcel->createWriter($phpExcelObject, 'Excel2007');
+//        $response = new StreamedResponse(
+//            function () use ($writer) {
+//                $tempFile = $this->get('kernel')->getCacheDir().'/'. 
+//                    rand(0, getrandmax()).rand(0, getrandmax()).".tmp";
+//                $writer->save($tempFile);
+//                readfile($tempFile);
+//                unlink($tempFile);
+//            },
+//            200, array()
+//        );    
+//        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
+//        $response->headers->set('Content-Disposition', 'attachment;filename=admin_export_material.xlsx');
+//
+//        return $response;
+//    }
+//    
+    
     /**
      * 
      * @return \Doctrine\ORM\EntityManager
@@ -104,6 +145,8 @@ class ExcelController extends BaseExcelController {
         $columnLetter = \PHPExcel_Cell::stringFromColumnIndex($colNum);
         $sheet->getStyle($columnLetter . '1')->getFont()->setBold(true);
         $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
+        
+               
     }
 
     /**
@@ -111,133 +154,59 @@ class ExcelController extends BaseExcelController {
      */
     protected function createExcelData(\PhpExcel_Worksheet $sheet) {
         $row = 2;
-//        $results = $this->getResults();
-//
-//        foreach ($results as $Material) {
-//            $colNum = 1;
-//            $data = $this->getValueForCell('id', $Material);
-//            $formatedValue = $this->formatId($data);
-//
-//            // Convert DateTime object to given format
-//            if ($formatedValue instanceof \DateTime) {
-//                $formatedValue = $formatedValue->format('Y-m-d H:i:s');
-//            }
-//
-//            $sheet->setCellValueByColumnAndRow($colNum, $row, $formatedValue);
-//
-//            $colNum++;
-//            $data = $this->getValueForCell('name', $Material);
-//            $formatedValue = $this->formatName($data);
-//
-//            // Convert DateTime object to given format
-//            if ($formatedValue instanceof \DateTime) {
-//                $formatedValue = $formatedValue->format('Y-m-d H:i:s');
-//            }
-//
-//            $sheet->setCellValueByColumnAndRow($colNum, $row, $formatedValue);
-//
-//            $colNum++;
-//            $data = $this->getValueForCell('code', $Material);
-//            $formatedValue = $this->formatCode($data);
-//
-//            // Convert DateTime object to given format
-//            if ($formatedValue instanceof \DateTime) {
-//                $formatedValue = $formatedValue->format('Y-m-d H:i:s');
-//            }
-//
-//            $sheet->setCellValueByColumnAndRow($colNum, $row, $formatedValue);
-//
-//            $colNum++;
-//
-//
-//
-//            $row++;
-//        }
-         $em = $this->getEntityManager();
+        $em = $this->getEntityManager();
 
         $result = $em->createQueryBuilder()
-                ->select('mat.id, mat.name as matName, c.name as codeName')
+                ->select('mat.id, mat.name as matName, c.name as codeName, con.quantity as consumptionQuantity, '
+                        . 'gr.name as groupName, r.quantity as receiptQuantity, r.price as receiptPrice')
                 ->from('AppBundle\Entity\Material', 'mat')
                 ->leftJoin('mat.code', 'c')
+                ->leftjoin('mat.consumptions', 'con') 
+                ->leftjoin('mat.receipts', 'r')                               
+                ->leftjoin('con.group', 'gr')
                 ->getQuery()
                 ->getResult();
-        
-        $result1=$em->createQueryBuilder()
-                ->select('con.quantity, gr.name as groupName')
-                ->from('AppBundle\Entity\Consumption', 'con')
-                ->leftJoin('con.group', 'gr')
-                ->getQuery()
-                ->getResult();
-        
-//        var_dump($result1);die;
-        $excel_row=2;
+               
+        $recQuantiy=0;
+        $recPrice=0;
+        $conQuantity=0;
         for ($i=0; $i<count($result);$i++)
         {
-        $sheet->setCellValue('B' . $excel_row, $result[$i]["id"]);
-        $sheet->setCellValue('D' . $excel_row, $result[$i]["codeName"]);
-        $sheet->setCellValue('E' . $excel_row, $result[$i]["matName"]);
+        $sheet->setCellValue('B' . $row, $result[$i]["id"]);
+        $sheet->setCellValue('C' . $row, $result[$i]["groupName"]);
+        $sheet->setCellValue('D' . $row, $result[$i]["codeName"]);
+        $sheet->setCellValue('E' . $row, $result[$i]["matName"]);
+//        $sheet->setCellValue('F' . $row, $result[$i]["quantity"]);
+//        $sheet->setCellValue('G' . $row, $result[$i]["quantity"]);
+        $sheet->setCellValue('H' . $row, $result[$i]["receiptQuantity"]);
+        $sheet->setCellValue('I' . $row, $result[$i]["receiptPrice"]);
+        $sheet->setCellValue('J' . $row, $result[$i]["consumptionQuantity"]);
+//        $sheet->setCellValue('K' . $row, $result[$i]["consumptionPrice"]);
+        
+        $recQuantiy+=$result[$i]["receiptQuantity"];
+        $recPrice+=$result[$i]["receiptPrice"];
+        $conQuantity+=$result[$i]["consumptionQuantity"];
+        $row++;
 
-        $excel_row++;
         
         }
-        $excel_row=2;
-        for ($i=0; $i<count($result1);$i++)
-        {
-        $sheet->setCellValue('С' . $excel_row, $result1[$i]["groupName"]);
-        $sheet->setCellValue('J' . $excel_row, $result1[$i]["quantity"]);
-
-        $excel_row++;
+        $sheet->setCellValue('H' . $row, $recQuantiy);
+        $sheet->setCellValue('I' . $row, $recPrice);
+        $sheet->setCellValue('J' . $row, $conQuantity);
         
-        }
         
-        $row1 = $excel_row - 1;
-        var_dump($row1);die;
+        $row2=count($result)+1;
         $sheet->setCellValue('B' . $row, 'Итого: ');
-
-        $sheet->setCellValue('F' . $row, '=SUM(F2:F' . $row1 . ')');
-        $sheet->setCellValue('G' . $row, '=SUM(G2:G' . $row1 . ')');
-        $sheet->setCellValue('H' . $row, '=SUM(H2:H' . $row1 . ')');
-        $sheet->setCellValue('I' . $row, '=SUM(I2:I' . $row1 . ')');
-        $sheet->setCellValue('J' . $row, '=SUM(J2:J' . $row1 . ')');
-        $sheet->setCellValue('K' . $row, '=SUM(K2:K' . $row1 . ')');
-        $sheet->setCellValue('L' . $row, '=SUM(L2:L' . $row1 . ')');
-//    $sheet->setCellValue('M'.$row, '=SUM(M2:M'.$row1.')');
-
-
-       
-        
-        
+//
+//        $sheet->setCellValue('F' . $row, '=SUM(F2:F' . $row2 . ')');
+//        $sheet->setCellValue('G' . $row, '=SUM(G2:G' . $row2 . ')');
+//        $sheet->setCellValue('H' . $row, '=SUM(H2:H' . $row2 . ')');
+//        $sheet->setCellValue('I' . $row, '=SUM(I2:I' . $row2 . ')');
+//        $sheet->setCellValue('J' . $row, '=SUM(J2:J' . $row2 . ')');
+//        $sheet->setCellValue('K' . $row, '=SUM(K2:K' . $row2 . ')');
+//        $sheet->setCellValue('L' . $row, '=SUM(L2:L' . $row2 . ')');
+//        $sheet->setCellValue('M'.$row, '=SUM(M2:M'.$row2.')');
+//                
         }
-
-    /**
-     * Gets the value from the given field that will be place at an Excel cell
-     *
-     * @param string $field   The name of the field to extract the value
-     * @param mixed  $Material The main entity object
-     *
-     * @return $data The data to place on the respective Excel cell
-     */
-    protected function getValueForCell($field, $Material) {
-        $accessor = PropertyAccess::createPropertyAccessor();
-        $data = $Material;
-
-        // Retrieve relations, but stop on $data = null
-        while (($pos = strpos($field, '.')) > 0 && $data !== null) {
-            $data = $accessor->getValue($data, substr($field, 0, $pos));
-            $field = substr($field, $pos + 1);
-        }
-
-        if ($data !== null) {
-            $data = $accessor->getValue($data, $field);
-        }
-
-        // Convert DateTime object to given format
-        if ($data instanceof \DateTime) {
-            $data = $data->format('Y-m-d H:i:s');
-        }
-
-        return $data;
-    }
-
 
 }

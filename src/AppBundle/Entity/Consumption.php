@@ -20,7 +20,7 @@ class Consumption {
     private $id;
      /**
      * 
-     * @ORM\ManyToOne(targetEntity="Material")
+     * @ORM\ManyToOne(targetEntity="Material", inversedBy="consumptions")
      * @ORM\JoinColumn(nullable=false)
      *
      */
@@ -42,7 +42,9 @@ class Consumption {
     private $description;
     
     
-
+    public function __toString() {
+        return $this->description;
+    }
     /**
      * Get id
      *

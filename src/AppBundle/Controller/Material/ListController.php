@@ -8,6 +8,7 @@ use Admingenerated\AppBundle\BaseMaterialController\ListController as BaseListCo
  */
 class ListController extends BaseListController
 {
+    
 //    public function indexAction(\Symfony\Component\HttpFoundation\Request $request)
 //    {
 //        $em = $this->getDoctrine()->getManager();

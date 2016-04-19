@@ -26,7 +26,7 @@ class Inventory {
      */
     protected $material;
      /**
-     * @ORM\Column(type="integer", nullable=false)
+     * @ORM\Column(type="date", nullable=false)
      */
     private $date;
      /**

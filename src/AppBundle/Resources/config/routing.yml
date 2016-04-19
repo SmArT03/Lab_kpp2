@@ -27,4 +27,4 @@ AppBundle_admin_app_bundle_Group:
     resource: "@AppBundle/Controller/Group/"
     type:     admingenerator
     prefix:   /admin/app_bundle/Group
-
+    

@@ -21,8 +21,17 @@ class Material {
      */
     private $id;
     
-    
-     /**
+    /**
+     * 
+     * @ORM\OneToMany(targetEntity="Consumption", mappedBy="material")
+     */
+    protected $consumptions;
+    /**
+     * 
+     * @ORM\OneToMany(targetEntity="Receipt", mappedBy="material")
+     */
+    protected $receipts;
+    /**
      * 
      * @ORM\ManyToOne(targetEntity="Code")
      * @ORM\JoinColumn(nullable=false)
@@ -93,5 +102,78 @@ class Material {
     public function getCode()
     {
         return $this->code;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->consumptions = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add consumptions
+     *
+     * @param \AppBundle\Entity\Consumption $consumptions
+     * @return Material
+     */
+    public function addConsumption(\AppBundle\Entity\Consumption $consumptions)
+    {
+        $this->consumptions[] = $consumptions;
+
+        return $this;
+    }
+
+    /**
+     * Remove consumptions
+     *
+     * @param \AppBundle\Entity\Consumption $consumptions
+     */
+    public function removeConsumption(\AppBundle\Entity\Consumption $consumptions)
+    {
+        $this->consumptions->removeElement($consumptions);
+    }
+
+    /**
+     * Get consumptions
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getConsumptions()
+    {
+        return $this->consumptions;
+    }
+
+    /**
+     * Add receipts
+     *
+     * @param \AppBundle\Entity\Receipt $receipts
+     * @return Material
+     */
+    public function addReceipt(\AppBundle\Entity\Receipt $receipts)
+    {
+        $this->receipts[] = $receipts;
+
+        return $this;
+    }
+
+    /**
+     * Remove receipts
+     *
+     * @param \AppBundle\Entity\Receipt $receipts
+     */
+    public function removeReceipt(\AppBundle\Entity\Receipt $receipts)
+    {
+        $this->receipts->removeElement($receipts);
+    }
+
+    /**
+     * Get receipts
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getReceipts()
+    {
+        return $this->receipts;
     }
 }
