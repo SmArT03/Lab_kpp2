@@ -4,53 +4,46 @@ namespace AppBundle\Controller\Material;
 
 use Admingenerated\AppBundle\BaseMaterialController\ExcelController as BaseExcelController;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-
+use Admingenerator\FormExtensionsBundle\Form\Type\DateRangePickerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 /**
  * ExcelController
  */
 class ExcelController extends BaseExcelController {
-//
-//    public function excelAction(Request $request)
-//    {
-//        $this->request = $request;
-//            
-//        
-//        // Create the PHPExcel object with some standard values
-//        try {
-//          $phpexcel = $this->get('phpexcel');
-//        } catch (ServiceNotFoundException $e){
-//          throw new \Exception('You will need to enable the PHPExcel bundle for this function to work.', null, $e);
-//        }
-//
-//        $phpExcelObject = $phpexcel->createPHPExcelObject();
-//        $this->createExcelObject($phpExcelObject);
-//        $sheet = $phpExcelObject->setActiveSheetIndex(0);
-//
-//        // Create the first bold row in the Excel spreadsheet
-//        $this->createExcelHeader($sheet);
-//
-//        // Print the data
-//        $this->createExcelData($sheet);
-//
-//        // Create the Writer, Response and add header
-//        $writer = $phpexcel->createWriter($phpExcelObject, 'Excel2007');
-//        $response = new StreamedResponse(
-//            function () use ($writer) {
-//                $tempFile = $this->get('kernel')->getCacheDir().'/'. 
-//                    rand(0, getrandmax()).rand(0, getrandmax()).".tmp";
-//                $writer->save($tempFile);
-//                readfile($tempFile);
-//                unlink($tempFile);
-//            },
-//            200, array()
-//        );    
-//        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
-//        $response->headers->set('Content-Disposition', 'attachment;filename=admin_export_material.xlsx');
-//
-//        return $response;
-//    }
-//    
+
+    public function excelAction(Request $request)
+    {
+        $task = new \AppBundle\Entity\Material();
+        $task->setname('Write a name');
+        
+         $form = $this->createFormBuilder()
+            ->add('period', DateRangePickerType::class)
+            ->add('name', TextType::class)
+            ->add('filter', SubmitType::class, array('label' => 'date'))
+            ->getForm();
+
+        
+    $form->handleRequest($request);
     
+    
+ if ($form->isSubmitted() && $form->isValid()) {
+     
+        // ... perform some action, such as saving the task to the database
+
+        //return $this->redirectToRoute('task_success');
+    }
+    
+    
+         return $this->render('AppBundle:MaterialExcel:index.html.twig', array(
+            'form' => $form->createView(),
+        ));
+
+         
+     
+    }
+        
     /**
      * 
      * @return \Doctrine\ORM\EntityManager
