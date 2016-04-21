@@ -5,7 +5,15 @@ params:
     concurrency_lock: ~
     bundle_name: AppBundle
     pk_requirement: ~
-    fields: ~
+    fields:
+        name:
+            label: Имя
+        code:
+            label: Код ЗИП
+        createdAt:
+            label: Создан
+        updatedAt:
+            label: Обновлен
     object_actions:
         delete: ~
     batch_actions:
@@ -13,8 +21,8 @@ params:
 builders:
     list:
         params:
-            title: Material
-            display: [id, name, code, createdAt, updatedAt]
+            title: Материалы
+            display: [name, code, createdAt, updatedAt]
             actions:
                 new: ~
                 excel: ~
@@ -27,22 +35,22 @@ builders:
         filetype: ~
     new:
         params:
-            title: New Material
+            title: Новый материал
             display: [name, code]
             actions:
                 save: ~
                 list: ~
     edit:
         params:
-            title: "You're editing  \"%object%\"|{ %object%: Material.name }|"
+            title: "Вы редактируете материал  \"%object%\"|{ %object%: Material.name }|"
             display: [name, code]
             actions:
                 save: ~
                 list: ~
     show:
         params:
-            title: "You're viewing  \"%object%\"|{ %object%: Material.name }|"
-            display: [ name, code]
+            title: "Вы просматриваете материал \"%object%\"|{ %object%: Material.name }|"
+            display: [name, code, createdAt, updatedAt]
             actions:
                 list: ~
                 new: ~

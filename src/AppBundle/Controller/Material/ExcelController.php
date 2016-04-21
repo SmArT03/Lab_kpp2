@@ -30,13 +30,22 @@ class ExcelController extends BaseExcelController {
         $dateRange=new AnalyticsDateRange();
         
          $form = $this->createFormBuilder($dateRange)
-            ->add('dateStart', DateType::class, array(
-                'attr' => array('style' => 'display:inline'), 
-                'label_attr' => array('style' => 'margin:200'))
+                 
+            ->add('dateStart', DateType::class
+                    , array( 
+			'years' => range(date('Y') - 3, date('c')) ,
+                        'label' => 'Начальная дата')
                     )
-            ->add('dateEnd', DateType::class)
+            ->add('dateEnd', DateType::class
+                    , array(
+			'years' => range(date('Y') - 3, date('Y')) ,
+//                'attr' => array('style' => 'display:inline'), 
+                        'label' => 'Конечная дата')
+//                'label_attr' => array('style' => 'margin:200'))
+                    )
             ->add('filter', SubmitType::class, array(
-                'label' => 'Create report')
+                'label' => 'Создать отчет',
+                'attr' => array('style' => 'padding:20'))
                     )
             ->getForm();
 

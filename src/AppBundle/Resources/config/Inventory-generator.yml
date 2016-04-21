@@ -5,7 +5,19 @@ params:
     concurrency_lock: ~
     bundle_name: AppBundle
     pk_requirement: ~
-    fields: ~
+    fields:
+        material:
+            label: Наименование материала
+        date:
+            label: Дата
+        before:
+            label: До
+        after:
+            label: После
+        createdAt:
+            label: Создан
+        updatedAt:
+            label: Обновлен
     object_actions:
         delete: ~
     batch_actions:
@@ -13,8 +25,8 @@ params:
 builders:
     list:
         params:
-            title: List for AppBundle
-            display: ~
+            title: Инвентаризация
+            display: [material, date, before, after, createdAt, updatedAt]
             actions:
                 new: ~
             object_actions:
@@ -26,22 +38,22 @@ builders:
         filetype: ~
     new:
         params:
-            title: New object for AppBundle
+            title: Новая проверка
             display: [material, date, before, after]
             actions:
                 save: ~
                 list: ~
     edit:
         params:
-            title: "You're editing the object \"%object%\"|{ %object%: Inventory.date }|"
+            title: "Вы редактируете \"%object%\"|{ %object%: Inventory.material }|"
             display: [material, date, before, after]
             actions:
                 save: ~
                 list: ~
     show:
         params:
-            title: "You're viewing the object \"%object%\"|{ %object%: Inventory.date }|"
-            display: ~
+            title: "Вы просматриваете \"%object%\"|{ %object%: Inventory.material }|"
+            display: [material, date, before, after, createdAt, updatedAt]
             actions:
                 list: ~
                 new: ~

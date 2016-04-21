@@ -5,7 +5,13 @@ params:
     concurrency_lock: ~
     bundle_name: AppBundle
     pk_requirement: ~
-    fields: ~
+    fields:
+        name:
+            label: Имя
+        createdAt:
+            label: Создан
+        updatedAt:
+            label: Обновлен
     object_actions:
         delete: ~
     batch_actions:
@@ -13,8 +19,8 @@ params:
 builders:
     list:
         params:
-            title: List for AppBundle
-            display: ~
+            title: Группы назначений	
+            display: [name, createdAt, updatedAt]
             actions:
                 new: ~
             object_actions:
@@ -26,22 +32,22 @@ builders:
         filetype: ~
     new:
         params:
-            title: New object for AppBundle
+            title: Новая группа назначений
             display: [name]
             actions:
                 save: ~
                 list: ~
     edit:
         params:
-            title: "You're editing the object \"%object%\"|{ %object%: Group.name }|"
+            title: "Вы редактируете группу назначений \"%object%\"|{ %object%: Group.name }|"
             display: [name]
             actions:
                 save: ~
                 list: ~
     show:
         params:
-            title: "You're viewing the object \"%object%\"|{ %object%: Group.name }|"
-            display: ~
+            title: "Вы просматриваете группу назначений \"%object%\"|{ %object%: Group.name }|"
+            display: [name, createdAt, updatedAt]
             actions:
                 list: ~
                 new: ~
