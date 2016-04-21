@@ -20,7 +20,7 @@ class Inventory {
     private $id; 
      /**
      * 
-     * @ORM\ManyToOne(targetEntity="Material")
+     * @ORM\ManyToOne(targetEntity="Material", inversedBy="inventories")
      * @ORM\JoinColumn(nullable=false)
      *
      */
@@ -118,6 +118,8 @@ class Inventory {
     {
         return $this->after;
     }
+
+
 
     /**
      * Set material

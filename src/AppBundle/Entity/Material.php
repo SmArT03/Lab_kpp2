@@ -26,6 +26,12 @@ class Material {
      * @ORM\OneToMany(targetEntity="Consumption", mappedBy="material")
      */
     protected $consumptions;
+  
+    /**
+     * 
+     * @ORM\OneToMany(targetEntity="Inventory", mappedBy="material")
+     */
+    protected $inventories;
     /**
      * 
      * @ORM\OneToMany(targetEntity="Receipt", mappedBy="material")
@@ -175,5 +181,40 @@ class Material {
     public function getReceipts()
     {
         return $this->receipts;
+    }
+    
+   
+
+    /**
+     * Add inventories
+     *
+     * @param \AppBundle\Entity\Consumption $inventories
+     * @return Material
+     */
+    public function addInventory(\AppBundle\Entity\Consumption $inventories)
+    {
+        $this->inventories[] = $inventories;
+
+        return $this;
+    }
+
+    /**
+     * Remove inventories
+     *
+     * @param \AppBundle\Entity\Consumption $inventories
+     */
+    public function removeInventory(\AppBundle\Entity\Consumption $inventories)
+    {
+        $this->inventories->removeElement($inventories);
+    }
+
+    /**
+     * Get inventories
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getInventories()
+    {
+        return $this->inventories;
     }
 }

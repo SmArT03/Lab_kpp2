@@ -4,24 +4,40 @@ namespace AppBundle\Controller\Material;
 
 use Admingenerated\AppBundle\BaseMaterialController\ExcelController as BaseExcelController;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Admingenerator\FormExtensionsBundle\Form\Type\DateRangePickerType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Admingenerator\FormExtensionsBundle\Form\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use AppBundle\Model\AnalyticsDateRange;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 /**
  * ExcelController
  */
 class ExcelController extends BaseExcelController {
 
+    /**
+     * 
+     * @Route("/excel", name="excel")
+     * @Method({"GET", "POST"})
+     */
     public function excelAction(Request $request)
     {
-        $task = new \AppBundle\Entity\Material();
-        $task->setname('Write a name');
+        //$task = new \AppBundle\Entity\Material();
+        //$task->setname('Write a name');
         
-         $form = $this->createFormBuilder()
-            ->add('period', DateRangePickerType::class)
-            ->add('name', TextType::class)
-            ->add('filter', SubmitType::class, array('label' => 'date'))
+        $dateRange=new AnalyticsDateRange();
+        
+         $form = $this->createFormBuilder($dateRange)
+            ->add('dateStart', DateType::class, array(
+                'attr' => array('style' => 'display:inline'), 
+                'label_attr' => array('style' => 'margin:200'))
+                    )
+            ->add('dateEnd', DateType::class)
+            ->add('filter', SubmitType::class, array(
+                'label' => 'Create report')
+                    )
             ->getForm();
 
         
@@ -30,10 +46,45 @@ class ExcelController extends BaseExcelController {
     
  if ($form->isSubmitted() && $form->isValid()) {
      
-        // ... perform some action, such as saving the task to the database
+      $this->request = $request;
+            
+        
+        // Create the PHPExcel object with some standard values
+        try {
+          $phpexcel = $this->get('phpexcel');
+        } catch (ServiceNotFoundException $e){
+          throw new \Exception('You will need to enable the PHPExcel bundle for this function to work.', null, $e);
+        }
 
-        //return $this->redirectToRoute('task_success');
-    }
+        $phpExcelObject = $phpexcel->createPHPExcelObject();
+        $this->createExcelObject($phpExcelObject);
+        $sheet = $phpExcelObject->setActiveSheetIndex(0);
+
+        // Create the first bold row in the Excel spreadsheet
+        $this->createExcelHeader($sheet);
+
+        // Print the data
+        $this->createExcelDataNew($sheet, $dateRange);
+
+        // Create the Writer, Response and add header
+        $writer = $phpexcel->createWriter($phpExcelObject, 'Excel2007');
+        $response = new StreamedResponse(
+            function () use ($writer) {
+                $tempFile = $this->get('kernel')->getCacheDir().'/'. 
+                    rand(0, getrandmax()).rand(0, getrandmax()).".tmp";
+                $writer->save($tempFile);
+                readfile($tempFile);
+                unlink($tempFile);
+            },
+            200, array()
+        );    
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment;filename=admin_export_material.xlsx');
+
+        return $response;
+     
+        
+     }
     
     
          return $this->render('AppBundle:MaterialExcel:index.html.twig', array(
@@ -145,21 +196,24 @@ class ExcelController extends BaseExcelController {
     /**
      * Fills the Excel spreadsheet with data
      */
-    protected function createExcelData(\PhpExcel_Worksheet $sheet) {
+    protected function createExcelDataNew(\PhpExcel_Worksheet $sheet, $dateRange) {
         $row = 2;
         $em = $this->getEntityManager();
 
         $result = $em->createQueryBuilder()
                 ->select('mat.id, mat.name as matName, c.name as codeName, con.quantity as consumptionQuantity, '
-                        . 'gr.name as groupName, r.quantity as receiptQuantity, r.price as receiptPrice')
+                        . 'gr.name as groupName, r.quantity as receiptQuantity, r.price as receiptPrice,  inv.date')
                 ->from('AppBundle\Entity\Material', 'mat')
                 ->leftJoin('mat.code', 'c')
                 ->leftjoin('mat.consumptions', 'con') 
-                ->leftjoin('mat.receipts', 'r')                               
-                ->leftjoin('con.group', 'gr')
+                ->leftjoin('mat.receipts', 'r')       
+                ->leftjoin('mat.inventories', 'inv')                                
+                ->leftjoin('con.group', 'gr')    
+                ->where('inv.date >= :from AND inv.date <= :to')
+                ->setParameter('from' , $dateRange->getDateStart())
+                ->setParameter('to' , $dateRange->getDateEnd())
                 ->getQuery()
                 ->getResult();
-               
         $recQuantiy=0;
         $recPrice=0;
         $conQuantity=0;

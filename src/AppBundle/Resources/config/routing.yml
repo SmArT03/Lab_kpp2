@@ -28,3 +28,7 @@ AppBundle_admin_app_bundle_Group:
     type:     admingenerator
     prefix:   /admin/app_bundle/Group
     
+app_bundle:
+    resource: "@AppBundle/Controller/Material"
+    type:     annotation
+    prefix:   /
