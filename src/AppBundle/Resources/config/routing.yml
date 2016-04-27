@@ -1,3 +1,8 @@
+app_bundle:
+    resource: "@AppBundle/Controller/Inventory"
+    type:     annotation
+    prefix:   /admin/app_bundle/Inventory
+
 AppBundle_admin_app_bundle_Consumption:
     resource: "@AppBundle/Controller/Consumption/"
     type:     admingenerator
@@ -28,7 +33,3 @@ AppBundle_admin_app_bundle_Group:
     type:     admingenerator
     prefix:   /admin/app_bundle/Group
     
-app_bundle:
-    resource: "@AppBundle/Controller/Material"
-    type:     annotation
-    prefix:   /

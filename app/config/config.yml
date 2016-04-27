@@ -102,8 +102,13 @@ admingenerator_generator:
 
     # add this line if you want to use assetic
     base_admin_template: ::base.html.twig
-    
-    
+    twig:
+        use_localized_date: true
+        date_format: 'yyyy-MM-dd'
+        datetime_format: 'yyyy-MM-dd HH:mm'
+        localized_date_format: "medium"
+        localized_datetime_format: "medium"
+        
 admingenerator_form_extensions:
     include_blueimp: true
     include_momentjs: true

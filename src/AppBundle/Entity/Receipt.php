@@ -42,6 +42,11 @@ class Receipt {
      * @ORM\Column(type="string", length=255)
      */
     private $description;
+    
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $supplier;
 
     public function __toString() {
         return $this->description;
@@ -146,5 +151,28 @@ class Receipt {
     public function getMaterial()
     {
         return $this->material;
+    }
+
+    /**
+     * Set supplier
+     *
+     * @param string $supplier
+     * @return Receipt
+     */
+    public function setSupplier($supplier)
+    {
+        $this->supplier = $supplier;
+
+        return $this;
+    }
+
+    /**
+     * Get supplier
+     *
+     * @return string 
+     */
+    public function getSupplier()
+    {
+        return $this->supplier;
     }
 }

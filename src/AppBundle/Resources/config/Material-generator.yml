@@ -25,7 +25,6 @@ builders:
             display: [name, code, createdAt, updatedAt]
             actions:
                 new: ~
-                excel: ~
             object_actions:
                 edit: ~
                 delete: ~

@@ -29,6 +29,7 @@ builders:
             display: [material, date, before, after, createdAt, updatedAt]
             actions:
                 new: ~
+                excel: ~
             object_actions:
                 edit: ~
                 delete: ~

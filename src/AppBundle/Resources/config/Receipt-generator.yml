@@ -18,6 +18,8 @@ params:
             label: Создан
         updatedAt:
             label: Обновлен
+        supplier:
+            label: Поставщик
     object_actions:
         delete: ~
     batch_actions:
@@ -26,7 +28,7 @@ builders:
     list:
         params:
             title: Приход материалов
-            display: [material, quantity, price, description, createdAt, updatedAt]
+            display: [material, quantity, price, description, supplier, createdAt, updatedAt]
             actions:
                 new: ~
             object_actions:
@@ -39,21 +41,21 @@ builders:
     new:
         params:
             title: Новый приход
-            display: [quantity, material, price, description]
+            display: [quantity, material, price, description, supplier]
             actions:
                 save: ~
                 list: ~
     edit:
         params:
             title: "Вы редактируете приход для \"%object%\"|{ %object%: Receipt.material }|"
-            display: [quantity, material, price, description]
+            display: [quantity, material, price, description, supplier]
             actions:
                 save: ~
                 list: ~
     show:
         params:
             title: "Вы просматриваете приход для \"%object%\"|{ %object%: Receipt.material }|"
-            display: [material, quantity, price, description, createdAt, updatedAt]
+            display: [material, quantity, price, description, supplier, createdAt, updatedAt]
             actions:
                 list: ~
                 new: ~
