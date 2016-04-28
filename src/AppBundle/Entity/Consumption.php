@@ -36,6 +36,13 @@ class Consumption {
      * @ORM\Column(type="integer", nullable=false)
      */
     private $quantity;
+    
+
+     /**
+     * @ORM\Column(type="date", nullable=false)
+     */
+    private $date;
+    
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -145,5 +152,28 @@ class Consumption {
     public function getGroup()
     {
         return $this->group;
+    }
+
+    /**
+     * Set date
+     *
+     * @param \DateTime $date
+     * @return Consumption
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * Get date
+     *
+     * @return \DateTime 
+     */
+    public function getDate()
+    {
+        return $this->date;
     }
 }

@@ -199,24 +199,40 @@ class ExcelController extends BaseExcelController {
         $row = 2;
         $em = $this->getEntityManager();
         $result = $em->createQueryBuilder()
-                ->select('mat.id, mat.name as matName, c.name as codeName, con.quantity as consumptionQuantity, '
-                        . 'gr.name as groupName,  inv.date')->distinct()
+                ->select(' mat.name as matName, c.name as codeName, inv.date')
                 ->from('AppBundle\Entity\Material', 'mat')
-                ->innerJoin('mat.code', 'c')
-                ->leftjoin('mat.consumptions', 'con') 
-                ->leftjoin('mat.inventories', 'inv')                                
-                ->leftjoin('con.group', 'gr')    
+                ->innerJoin('mat.code', 'c') 
+                ->leftjoin('mat.inventories', 'inv')   
                 ->where('inv.date >= :from AND inv.date <= :to')
                 ->setParameter('from' , $dateStart[0] )
                 ->setParameter('to' , $dateStart[1])
                 ->getQuery()
                 ->getResult();
         
-//        $result_receipt = $em->createQueryBuilder()
-//                ->select('r.quantity as receiptQuantity')->distinct()
-//                ->from('AppBundle\Entity\Receipt', 'r')
-//                ->getQuery()
-//                ->getResult();
+//        SELECT quantity,SUM(quantity) FROM receipt
+//        WHERE date >= '2015-04-20' AND date <= '2016-04-29'
+//        GROUP BY material_id;
+
+ $result_consumption = $em->createQueryBuilder()
+                ->select('SUM(con.quantity) as consumptionQuantity, gr.name as groupName')
+                ->from('AppBundle\Entity\Consumption', 'con')
+                ->innerJoin('con.group', 'gr')
+                ->where('con.date >= :from AND con.date <= :to')
+                ->setParameter('from' , $dateStart[0] )
+                ->setParameter('to' , $dateStart[1])
+                ->getQuery()
+                ->getResult();
+        
+        $result_receipt = $em->createQueryBuilder()
+                ->select('SUM(r.quantity) as receiptQuantity,SUM(r.price) as receiptPrice ')
+                ->from('AppBundle\Entity\Receipt', 'r')
+                ->where('r.date >= :from AND r.date <= :to')
+                ->setParameter('from' , $dateStart[0] )
+                ->setParameter('to' , $dateStart[1])
+                ->getQuery()
+                ->getResult();
+        
+        
         
         $recQuantiy=0;
         $recPrice=0;
@@ -224,24 +240,25 @@ class ExcelController extends BaseExcelController {
         $balance=0;
         for ($i=0; $i<count($result);$i++)
         {
+            var_dump($result_consumption);die;
             $id=$i+1;
         $sheet->setCellValue('B' . $row, $id);
-        $sheet->setCellValue('C' . $row, $result[$i]["groupName"]);
+        $sheet->setCellValue('C' . $row, $result_consumption[$i]["groupName"]);
         $sheet->setCellValue('D' . $row, $result[$i]["codeName"]);
         $sheet->setCellValue('E' . $row, $result[$i]["matName"]);
 //        $sheet->setCellValue('F' . $row, $result[$i]["quantity"]);
-//        $sheet->setCellValue('G' . $row, $result[$i]["receiptPrice"]);
-//  //      $sheet->setCellValue('H' . $row, $result_receipt[$i]);
-//        $sheet->setCellValue('I' . $row, $result[$i]["receiptPrice"]);
-        $sheet->setCellValue('J' . $row, $result[$i]["consumptionQuantity"]);
-//        $sheet->setCellValue('K' . $row, $result[$i]["receiptPrice"]);
- //  //       $sheet->setCellValue('L' . $row, $result[$i]["receiptQuantity"]-$result[$i]["consumptionQuantity"]);
-//        $sheet->setCellValue('M' . $row, $result[$i]["receiptPrice"]);
+        $sheet->setCellValue('G' . $row, $result_receipt[$i]["receiptPrice"]);
+        $sheet->setCellValue('H' . $row, $result_receipt[$i]["receiptQuantity"]);
+        $sheet->setCellValue('I' . $row, $result_receipt[$i]["receiptPrice"]);
+        $sheet->setCellValue('J' . $row, $result_consumption[$i]["consumptionQuantity"]);
+        $sheet->setCellValue('K' . $row, $result_receipt[$i]["receiptPrice"]);
+        $sheet->setCellValue('L' . $row, $result_receipt[$i]["receiptQuantity"]-$result_consumption[$i]["consumptionQuantity"]);
+        $sheet->setCellValue('M' . $row, $result_receipt[$i]["receiptPrice"]);
         
-    //  //    $recQuantiy+=$result[$i]["receiptQuantity"];
-    //  //    $recPrice+=$result[$i]["receiptPrice"];
-        $conQuantity+=$result[$i]["consumptionQuantity"];
- //  //       $balance+=$result[$i]["receiptQuantity"]-$result[$i]["consumptionQuantity"];
+        $recQuantiy+=$result_receipt[$i]["receiptQuantity"];
+        $recPrice+=$result_receipt[$i]["receiptPrice"];
+        $conQuantity+=$result_consumption[$i]["consumptionQuantity"];
+        $balance+=$result_receipt[$i]["receiptQuantity"]-$result_consumption[$i]["consumptionQuantity"];
         $row++;
 
         

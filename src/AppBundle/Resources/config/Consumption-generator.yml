@@ -12,6 +12,8 @@ params:
             label: Группа ЗИП
         quantity:
             label: Количество
+        date:
+            label: Дата
         description:
             label: Описание
         createdAt:
@@ -26,7 +28,7 @@ builders:
     list:
         params:
             title: Расход материалов
-            display: [material, group, quantity, description, createdAt, updatedAt]
+            display: [material, group, quantity, date, description, createdAt, updatedAt]
             actions:
                 new: ~
             object_actions:
@@ -39,21 +41,21 @@ builders:
     new:
         params:
             title: Новый расход
-            display: [material,group, quantity, description]
+            display: [material,group, quantity, date, description]
             actions:
                 save: ~
                 list: ~
     edit:
         params:
             title: "Вы редактируете расход для \"%object%\"|{ %object%: Consumption.material }|"
-            display: [material,group, quantity, description]
+            display: [material,group, quantity, date, description]
             actions:
                 save: ~
                 list: ~
     show:
         params:
             title: "Вы просматриваете расход для \"%object%\"|{ %object%: Consumption.material }|"
-            display: [material, group, quantity, description, createdAt, updatedAt]
+            display: [material, group, quantity, date, description, createdAt, updatedAt]
             actions:
                 list: ~
                 new: ~

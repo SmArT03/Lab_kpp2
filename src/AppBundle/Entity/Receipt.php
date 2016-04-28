@@ -38,6 +38,10 @@ class Receipt {
      */
     private $price;
 
+     /**
+     * @ORM\Column(type="date", nullable=false)
+     */
+    private $date;
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -174,5 +178,28 @@ class Receipt {
     public function getSupplier()
     {
         return $this->supplier;
+    }
+
+    /**
+     * Set date
+     *
+     * @param \DateTime $date
+     * @return Receipt
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * Get date
+     *
+     * @return \DateTime 
+     */
+    public function getDate()
+    {
+        return $this->date;
     }
 }
