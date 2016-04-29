@@ -10,7 +10,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-
 /**
  * ExcelController
  */
@@ -21,79 +20,71 @@ class ExcelController extends BaseExcelController {
      * @Route("/excel", name="excel")
      * @Method({"GET", "POST"})
      */
-    public function excelAction(Request $request)
-    {     
+    public function excelAction(Request $request) {
 
-         $form = $this->createFormBuilder()
-              ->add('dateRange', \Admingenerator\FormExtensionsBundle\Form\Type\DateRangePickerType::class, array(
-                  
-                   'label' => 'Укажите диапазон',
-                   'startDate' => date('Y-m-2'),
-                   'minDate' => date ('2012-01-01'),
-                   'maxDate' => date('Y-m-d'),
-                   'separator' => ' | ',
-              ))   
-            ->add('filter', SubmitType::class, array(
-                'label' => 'Создать отчет',
-                'attr' => array('style' => 'padding:20'))
-                    )
-            ->getForm();
+        $form = $this->createFormBuilder()
+                ->add('dateRange', \Admingenerator\FormExtensionsBundle\Form\Type\DateRangePickerType::class, array(
+                    'label' => 'Укажите диапазон',
+                    'startDate' => date('Y-m-2'),
+                    'minDate' => date('2012-01-01'),
+                    'maxDate' => date('Y-m-d'),
+                    'separator' => ' | ',
+                ))
+                ->add('filter', SubmitType::class, array(
+                    'label' => 'Создать отчет',
+                    'attr' => array('style' => 'padding:20'))
+                )
+                ->getForm();
 
-        
-    $form->handleRequest($request);
-        
- if ($form->isSubmitted() && $form->isValid()) {
-     
-      $this->request = $request;
-      $dateRang=$form->getData();
-      $dateStart=split("\| ",$dateRang["dateRange"]);
-                     
-        // Create the PHPExcel object with some standard values
-        try {
-          $phpexcel = $this->get('phpexcel');
-        } catch (ServiceNotFoundException $e){
-          throw new \Exception('You will need to enable the PHPExcel bundle for this function to work.', null, $e);
-        }
 
-        $phpExcelObject = $phpexcel->createPHPExcelObject();
-        $this->createExcelObject($phpExcelObject);
-        $sheet = $phpExcelObject->setActiveSheetIndex(0);
+        $form->handleRequest($request);
 
-        // Create the first bold row in the Excel spreadsheet
-        $this->createExcelHeader($sheet);
+        if ($form->isSubmitted() && $form->isValid()) {
 
-        // Print the data
-        $this->createExcelDataNew($sheet, $dateStart);
+            $this->request = $request;
+            $dateRang = $form->getData();
+            $dateStart = split("\| ", $dateRang["dateRange"]);
 
-        // Create the Writer, Response and add header
-        $writer = $phpexcel->createWriter($phpExcelObject, 'Excel2007');
-        $response = new StreamedResponse(
-            function () use ($writer) {
-                $tempFile = $this->get('kernel')->getCacheDir().'/'. 
-                    rand(0, getrandmax()).rand(0, getrandmax()).".tmp";
+            // Create the PHPExcel object with some standard values
+            try {
+                $phpexcel = $this->get('phpexcel');
+            } catch (ServiceNotFoundException $e) {
+                throw new \Exception('You will need to enable the PHPExcel bundle for this function to work.', null, $e);
+            }
+
+            $phpExcelObject = $phpexcel->createPHPExcelObject();
+            $this->createExcelObject($phpExcelObject);
+            $sheet = $phpExcelObject->setActiveSheetIndex(0);
+
+            // Create the first bold row in the Excel spreadsheet
+            $this->createExcelHeader($sheet);
+
+            // Print the data
+            $this->createExcelDataNew($sheet, $dateStart);
+
+            // Create the Writer, Response and add header
+            $writer = $phpexcel->createWriter($phpExcelObject, 'Excel2007');
+            $response = new StreamedResponse(
+                    function () use ($writer) {
+                $tempFile = $this->get('kernel')->getCacheDir() . '/' .
+                        rand(0, getrandmax()) . rand(0, getrandmax()) . ".tmp";
                 $writer->save($tempFile);
                 readfile($tempFile);
                 unlink($tempFile);
-            },
-            200, array()
-        );    
-        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment;filename=admin_export_material.xlsx');
+            }, 200, array()
+            );
+            $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
+            $response->headers->set('Content-Disposition', 'attachment;filename=admin_export_material.xlsx');
 
-        return $response;
-     
-        
-     }
-    
-    
-         return $this->render('AppBundle:MaterialExcel:index.html.twig', array(
-            'form' => $form->createView(),
+            return $response;
+        }
+
+
+        return $this->render('AppBundle:MaterialExcel:index.html.twig', array(
+                    'form' => $form->createView(),
         ));
-
-         
-     
     }
-        
+
     /**
      * 
      * @return \Doctrine\ORM\EntityManager
@@ -188,8 +179,6 @@ class ExcelController extends BaseExcelController {
         $columnLetter = \PHPExcel_Cell::stringFromColumnIndex($colNum);
         $sheet->getStyle($columnLetter . '1')->getFont()->setBold(true);
         $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
-        
-               
     }
 
     /**
@@ -201,91 +190,114 @@ class ExcelController extends BaseExcelController {
         $result = $em->createQueryBuilder()
                 ->select(' mat.name as matName, c.name as codeName, inv.date')
                 ->from('AppBundle\Entity\Material', 'mat')
-                ->innerJoin('mat.code', 'c') 
-                ->leftjoin('mat.inventories', 'inv')   
+                ->innerJoin('mat.code', 'c')
+                ->innerJoin('mat.inventories', 'inv')
                 ->where('inv.date >= :from AND inv.date <= :to')
-                ->setParameter('from' , $dateStart[0] )
-                ->setParameter('to' , $dateStart[1])
+                ->setParameter('from', $dateStart[0])
+                ->setParameter('to', $dateStart[1])
                 ->getQuery()
                 ->getResult();
-        
-//        SELECT quantity,SUM(quantity) FROM receipt
-//        WHERE date >= '2015-04-20' AND date <= '2016-04-29'
-//        GROUP BY material_id;
 
- $result_consumption = $em->createQueryBuilder()
+        $resultBalanseConsumption = $em->createQueryBuilder()
+                ->select('SUM(con.quantity) as consumptionQuantity')
+                ->from('AppBundle\Entity\Consumption', 'con')
+                ->where('con.date <= :from ')
+                ->setParameter('from', $dateStart[0])
+                ->groupBy('con.material')
+                ->getQuery()
+                ->getResult();
+
+        $resultBalanseReceipt = $em->createQueryBuilder()
+                ->select('SUM(r.quantity) as receiptQuantity ')
+                ->from('AppBundle\Entity\Receipt', 'r')
+                ->where('r.date <= :from')
+                ->setParameter('from', $dateStart[0])
+                ->groupBy('r.material')
+                ->getQuery()
+                ->getResult();
+
+        $result_consumption = $em->createQueryBuilder()
                 ->select('SUM(con.quantity) as consumptionQuantity, gr.name as groupName')
                 ->from('AppBundle\Entity\Consumption', 'con')
                 ->innerJoin('con.group', 'gr')
                 ->where('con.date >= :from AND con.date <= :to')
-                ->setParameter('from' , $dateStart[0] )
-                ->setParameter('to' , $dateStart[1])
+                ->setParameter('from', $dateStart[0])
+                ->setParameter('to', $dateStart[1])
+                ->groupBy('con.material')
                 ->getQuery()
                 ->getResult();
-        
+
+
         $result_receipt = $em->createQueryBuilder()
-                ->select('SUM(r.quantity) as receiptQuantity,SUM(r.price) as receiptPrice ')
+                ->select('SUM(r.quantity) as receiptQuantity ')
+                ->addSelect('(SELECT r1.price FROM AppBundle\Entity\Receipt r1 WHERE r1.createdAt = MAX(r.createdAt) ) as lastPrice')
                 ->from('AppBundle\Entity\Receipt', 'r')
                 ->where('r.date >= :from AND r.date <= :to')
-                ->setParameter('from' , $dateStart[0] )
-                ->setParameter('to' , $dateStart[1])
+                ->setParameter('from', $dateStart[0])
+                ->setParameter('to', $dateStart[1])
+                ->groupBy('r.material')
                 ->getQuery()
                 ->getResult();
-        
-        
-        
-        $recQuantiy=0;
-        $recPrice=0;
-        $conQuantity=0;
-        $balance=0;
-        for ($i=0; $i<count($result);$i++)
-        {
-            var_dump($result_consumption);die;
-            $id=$i+1;
-        $sheet->setCellValue('B' . $row, $id);
-        $sheet->setCellValue('C' . $row, $result_consumption[$i]["groupName"]);
-        $sheet->setCellValue('D' . $row, $result[$i]["codeName"]);
-        $sheet->setCellValue('E' . $row, $result[$i]["matName"]);
-//        $sheet->setCellValue('F' . $row, $result[$i]["quantity"]);
-        $sheet->setCellValue('G' . $row, $result_receipt[$i]["receiptPrice"]);
-        $sheet->setCellValue('H' . $row, $result_receipt[$i]["receiptQuantity"]);
-        $sheet->setCellValue('I' . $row, $result_receipt[$i]["receiptPrice"]);
-        $sheet->setCellValue('J' . $row, $result_consumption[$i]["consumptionQuantity"]);
-        $sheet->setCellValue('K' . $row, $result_receipt[$i]["receiptPrice"]);
-        $sheet->setCellValue('L' . $row, $result_receipt[$i]["receiptQuantity"]-$result_consumption[$i]["consumptionQuantity"]);
-        $sheet->setCellValue('M' . $row, $result_receipt[$i]["receiptPrice"]);
-        
-        $recQuantiy+=$result_receipt[$i]["receiptQuantity"];
-        $recPrice+=$result_receipt[$i]["receiptPrice"];
-        $conQuantity+=$result_consumption[$i]["consumptionQuantity"];
-        $balance+=$result_receipt[$i]["receiptQuantity"]-$result_consumption[$i]["consumptionQuantity"];
-        $row++;
 
+        $recQuantiy = 0;
+        $recPrice = 0;
+        $balPrice = 0;
+        $conPrice = 0;
+        $residuePrice = 0;
+        $conQuantity = 0;
+        $balanceForPeriod = 0;
+        $balance = 0;
         
+        for ($i = 0; $i < count($result); $i++) {
+            $id = $i + 1;
+            $sheet->setCellValue('B' . $row, $id);
+            $sheet->setCellValue('C' . $row, $result_consumption[$i]["groupName"]);
+            $sheet->setCellValue('D' . $row, $result[$i]["codeName"]);
+            $sheet->setCellValue('E' . $row, $result[$i]["matName"]);
+
+            if (!isset($resultBalanseReceipt[$i])) {
+                $resultBalanseReceipt[$i] = [];
+                $resultBalanseReceipt[$i]["receiptQuantity"] = 0;
+            }
+            if (!isset($resultBalanseConsumption[$i])) {
+                $resultBalanseConsumption[$i] = [];
+                $resultBalanseConsumption[$i]["consumptionQuantity"] = 0;
+            }
+            $sheet->setCellValue('F' . $row, $resultBalanseReceipt[$i]["receiptQuantity"] - $resultBalanseConsumption[$i]["consumptionQuantity"]);
+            $sheet->setCellValue('G' . $row, ($resultBalanseReceipt[$i]["receiptQuantity"] - $resultBalanseConsumption[$i]["consumptionQuantity"]) * $result_receipt[$i]["lastPrice"]);
+
+            $balance+=$resultBalanseReceipt[$i]["receiptQuantity"] - $resultBalanseConsumption[$i]["consumptionQuantity"];
+            $balPrice+=($resultBalanseReceipt[$i]["receiptQuantity"] - $resultBalanseConsumption[$i]["consumptionQuantity"]) * $result_receipt[$i]["lastPrice"];
+
+            $sheet->setCellValue('H' . $row, $result_receipt[$i]["receiptQuantity"]);
+            $sheet->setCellValue('I' . $row, $result_receipt[$i]["lastPrice"] * $result_receipt[$i]["receiptQuantity"]);
+            $sheet->setCellValue('J' . $row, $result_consumption[$i]["consumptionQuantity"]);
+            $sheet->setCellValue('K' . $row, $result_receipt[$i]["lastPrice"] * $result_consumption[$i]["consumptionQuantity"]);
+            $sheet->setCellValue('L' . $row, $result_receipt[$i]["receiptQuantity"] - $result_consumption[$i]["consumptionQuantity"]);
+            $sheet->setCellValue('M' . $row, $result_receipt[$i]["lastPrice"] * ($result_receipt[$i]["receiptQuantity"] - $result_consumption[$i]["consumptionQuantity"]));
+
+            $recQuantiy+=$result_receipt[$i]["receiptQuantity"];
+            $recPrice+=$result_receipt[$i]["lastPrice"] * $result_receipt[$i]["receiptQuantity"];
+            $conQuantity+=$result_consumption[$i]["consumptionQuantity"];
+            $conPrice+=$result_receipt[$i]["lastPrice"] * $result_consumption[$i]["consumptionQuantity"];
+            $balanceForPeriod+=$result_receipt[$i]["receiptQuantity"] - $result_consumption[$i]["consumptionQuantity"];
+            $residuePrice+=$result_receipt[$i]["lastPrice"] * ($result_receipt[$i]["receiptQuantity"] - $result_consumption[$i]["consumptionQuantity"]);
+            $row++;
         }
-//        $sheet->setCellValue('F' . $row, $recPrice);
-        $sheet->setCellValue('G' . $row, $recPrice);
+
+        $sheet->setCellValue('F' . $row, $balance);
+        $sheet->setCellValue('G' . $row, $balPrice);
         $sheet->setCellValue('H' . $row, $recQuantiy);
         $sheet->setCellValue('I' . $row, $recPrice);
         $sheet->setCellValue('J' . $row, $conQuantity);
-        $sheet->setCellValue('K' . $row, $recPrice);
-        $sheet->setCellValue('L' . $row, $balance);
-        $sheet->setCellValue('M' . $row, $recPrice);
-        
-        
-        
-        $row2=count($result)+1;
+        $sheet->setCellValue('K' . $row, $conPrice);
+        $sheet->setCellValue('L' . $row, $balanceForPeriod);
+        $sheet->setCellValue('M' . $row, $residuePrice);
+
+
+
+        $row2 = count($result) + 1;
         $sheet->setCellValue('B' . $row, 'Итого: ');
-//
-//        $sheet->setCellValue('F' . $row, '=SUM(F2:F' . $row2 . ')');
-//        $sheet->setCellValue('G' . $row, '=SUM(G2:G' . $row2 . ')');
-//        $sheet->setCellValue('H' . $row, '=SUM(H2:H' . $row2 . ')');
-//        $sheet->setCellValue('I' . $row, '=SUM(I2:I' . $row2 . ')');
-//        $sheet->setCellValue('J' . $row, '=SUM(J2:J' . $row2 . ')');
-//        $sheet->setCellValue('K' . $row, '=SUM(K2:K' . $row2 . ')');
-//        $sheet->setCellValue('L' . $row, '=SUM(L2:L' . $row2 . ')');
-//        $sheet->setCellValue('M'.$row, '=SUM(M2:M'.$row2.')');
-//                
-        }
+    }
 
 }
