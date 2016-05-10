@@ -188,7 +188,7 @@ class ExcelController extends BaseExcelController {
         $row = 2;
         $em = $this->getEntityManager();
         $result = $em->createQueryBuilder()
-                ->select(' mat.name as matName, c.name as codeName, inv.date')
+                ->select(' mat.name as matName, c.name as codeName, mat.id as matId')
                 ->from('AppBundle\Entity\Material', 'mat')
                 ->innerJoin('mat.code', 'c')
                 ->innerJoin('mat.inventories', 'inv')
@@ -197,10 +197,12 @@ class ExcelController extends BaseExcelController {
                 ->setParameter('to', $dateStart[1])
                 ->getQuery()
                 ->getResult();
-
+        
+        
         $resultBalanseConsumption = $em->createQueryBuilder()
-                ->select('SUM(con.quantity) as consumptionQuantity')
+                ->select('SUM(con.quantity) as BalanseConsumptionQuantity, mat.id as matId')
                 ->from('AppBundle\Entity\Consumption', 'con')
+                ->innerJoin('con.material', 'mat')
                 ->where('con.date <= :from ')
                 ->setParameter('from', $dateStart[0])
                 ->groupBy('con.material')
@@ -208,8 +210,9 @@ class ExcelController extends BaseExcelController {
                 ->getResult();
 
         $resultBalanseReceipt = $em->createQueryBuilder()
-                ->select('SUM(r.quantity) as receiptQuantity ')
+                ->select('SUM(r.quantity) as BalanseReceiptQuantity, mat.id as matId ')
                 ->from('AppBundle\Entity\Receipt', 'r')
+                ->innerJoin('r.material', 'mat')
                 ->where('r.date <= :from')
                 ->setParameter('from', $dateStart[0])
                 ->groupBy('r.material')
@@ -217,8 +220,9 @@ class ExcelController extends BaseExcelController {
                 ->getResult();
 
         $result_consumption = $em->createQueryBuilder()
-                ->select('SUM(con.quantity) as consumptionQuantity, gr.name as groupName')
+                ->select('SUM(con.quantity) as consumptionQuantity, gr.name as groupName, mat.id as matId')
                 ->from('AppBundle\Entity\Consumption', 'con')
+                ->innerJoin('con.material', 'mat')
                 ->innerJoin('con.group', 'gr')
                 ->where('con.date >= :from AND con.date <= :to')
                 ->setParameter('from', $dateStart[0])
@@ -229,9 +233,10 @@ class ExcelController extends BaseExcelController {
 
 
         $result_receipt = $em->createQueryBuilder()
-                ->select('SUM(r.quantity) as receiptQuantity ')
+                ->select('SUM(r.quantity) as receiptQuantity, mat.id as matId ')
                 ->addSelect('(SELECT r1.price FROM AppBundle\Entity\Receipt r1 WHERE r1.createdAt = MAX(r.createdAt) ) as lastPrice')
                 ->from('AppBundle\Entity\Receipt', 'r')
+                ->innerJoin('r.material', 'mat')
                 ->where('r.date >= :from AND r.date <= :to')
                 ->setParameter('from', $dateStart[0])
                 ->setParameter('to', $dateStart[1])
@@ -248,40 +253,74 @@ class ExcelController extends BaseExcelController {
         $balanceForPeriod = 0;
         $balance = 0;
         
-        for ($i = 0; $i < count($result); $i++) {
+        
+        $arr = array();
+       
+        foreach ($result as $material){
+            if(!isset($arr[$material['matId']])){
+                $arr[$material['matId']] = array();
+                $arr[$material['matId']]['matName'] = $material['matName'];
+                $arr[$material['matId']]['codeName'] = $material['codeName'];
+                $arr[$material['matId']]['receiptQuantity'] =0;
+                $arr[$material['matId']]['lastPrice'] =0;
+                $arr[$material['matId']]['consumptionQuantity'] =0;
+                $arr[$material['matId']]['groupName'] =0;
+                $arr[$material['matId']]['BalanseReceiptQuantity'] =0;
+                $arr[$material['matId']]['BalanseConsumptionQuantity'] =0;
+                
+            }
+            foreach ($result_receipt as $receipt){
+                if($receipt['matId'] == $material['matId']){
+                    $arr[$material['matId']]['receiptQuantity'] = $receipt['receiptQuantity'];
+                    $arr[$material['matId']]['lastPrice'] = $receipt['lastPrice'];
+                }
+            }  
+            foreach ($result_consumption as $consumption){
+                if($consumption['matId'] == $material['matId']){
+                    $arr[$material['matId']]['consumptionQuantity'] = $consumption['consumptionQuantity'];
+                    $arr[$material['matId']]['groupName'] = $consumption['groupName'];
+                }
+            }
+            foreach ($resultBalanseReceipt as $Balansereceipt){
+                if($receipt['matId'] == $material['matId']){
+                    $arr[$material['matId']]['BalanseReceiptQuantity'] = $Balansereceipt['BalanseReceiptQuantity'];
+                }
+            }
+            foreach ($resultBalanseConsumption as $BalanseConsumption){
+                if($receipt['matId'] == $material['matId']){
+                    $arr[$material['matId']]['BalanseConsumptionQuantity'] = $BalanseConsumption['BalanseConsumptionQuantity'];
+                }
+            }
+        }
+         $i=0;
+        foreach ($arr as $value){
+            $sheet->setCellValue('F' . $row, $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]);
+            $sheet->setCellValue('G' . $row, ($value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]) * $value["lastPrice"]);
+
+            $balance+=$value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"];
+            $balPrice+=($value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]) * $value["lastPrice"];
+
             $id = $i + 1;
             $sheet->setCellValue('B' . $row, $id);
-            $sheet->setCellValue('C' . $row, $result_consumption[$i]["groupName"]);
-            $sheet->setCellValue('D' . $row, $result[$i]["codeName"]);
-            $sheet->setCellValue('E' . $row, $result[$i]["matName"]);
+            $sheet->setCellValue('C' . $row, $value["groupName"]);
+            $sheet->setCellValue('D' . $row, $value["codeName"]);
+            $sheet->setCellValue('E' . $row, $value["matName"]);
 
-            if (!isset($resultBalanseReceipt[$i])) {
-                $resultBalanseReceipt[$i] = [];
-                $resultBalanseReceipt[$i]["receiptQuantity"] = 0;
-            }
-            if (!isset($resultBalanseConsumption[$i])) {
-                $resultBalanseConsumption[$i] = [];
-                $resultBalanseConsumption[$i]["consumptionQuantity"] = 0;
-            }
-            $sheet->setCellValue('F' . $row, $resultBalanseReceipt[$i]["receiptQuantity"] - $resultBalanseConsumption[$i]["consumptionQuantity"]);
-            $sheet->setCellValue('G' . $row, ($resultBalanseReceipt[$i]["receiptQuantity"] - $resultBalanseConsumption[$i]["consumptionQuantity"]) * $result_receipt[$i]["lastPrice"]);
+            
+            $sheet->setCellValue('H' . $row, $value["receiptQuantity"]);
+            $sheet->setCellValue('I' . $row, $value["lastPrice"] * $value["receiptQuantity"]);
+            $sheet->setCellValue('J' . $row, $value["consumptionQuantity"]);
+            $sheet->setCellValue('K' . $row, $value["lastPrice"] * $value["consumptionQuantity"]);
+            $sheet->setCellValue('L' . $row, $value["receiptQuantity"] - $value["consumptionQuantity"]);
+            $sheet->setCellValue('M' . $row, $value["lastPrice"] * ($value["receiptQuantity"] - $value["consumptionQuantity"]));
 
-            $balance+=$resultBalanseReceipt[$i]["receiptQuantity"] - $resultBalanseConsumption[$i]["consumptionQuantity"];
-            $balPrice+=($resultBalanseReceipt[$i]["receiptQuantity"] - $resultBalanseConsumption[$i]["consumptionQuantity"]) * $result_receipt[$i]["lastPrice"];
-
-            $sheet->setCellValue('H' . $row, $result_receipt[$i]["receiptQuantity"]);
-            $sheet->setCellValue('I' . $row, $result_receipt[$i]["lastPrice"] * $result_receipt[$i]["receiptQuantity"]);
-            $sheet->setCellValue('J' . $row, $result_consumption[$i]["consumptionQuantity"]);
-            $sheet->setCellValue('K' . $row, $result_receipt[$i]["lastPrice"] * $result_consumption[$i]["consumptionQuantity"]);
-            $sheet->setCellValue('L' . $row, $result_receipt[$i]["receiptQuantity"] - $result_consumption[$i]["consumptionQuantity"]);
-            $sheet->setCellValue('M' . $row, $result_receipt[$i]["lastPrice"] * ($result_receipt[$i]["receiptQuantity"] - $result_consumption[$i]["consumptionQuantity"]));
-
-            $recQuantiy+=$result_receipt[$i]["receiptQuantity"];
-            $recPrice+=$result_receipt[$i]["lastPrice"] * $result_receipt[$i]["receiptQuantity"];
-            $conQuantity+=$result_consumption[$i]["consumptionQuantity"];
-            $conPrice+=$result_receipt[$i]["lastPrice"] * $result_consumption[$i]["consumptionQuantity"];
-            $balanceForPeriod+=$result_receipt[$i]["receiptQuantity"] - $result_consumption[$i]["consumptionQuantity"];
-            $residuePrice+=$result_receipt[$i]["lastPrice"] * ($result_receipt[$i]["receiptQuantity"] - $result_consumption[$i]["consumptionQuantity"]);
+            $recQuantiy+=$value["receiptQuantity"];
+            $recPrice+=$value["lastPrice"] * $value["receiptQuantity"];
+            $conQuantity+=$value["consumptionQuantity"];
+            $conPrice+=$value["lastPrice"] * $value["consumptionQuantity"];
+            $balanceForPeriod+=$value["receiptQuantity"] - $value["consumptionQuantity"];
+            $residuePrice+=$value["lastPrice"] * ($value["receiptQuantity"] - $value["consumptionQuantity"]);
+            $i++;
             $row++;
         }
 
@@ -296,7 +335,6 @@ class ExcelController extends BaseExcelController {
 
 
 
-        $row2 = count($result) + 1;
         $sheet->setCellValue('B' . $row, 'Итого: ');
     }
 
