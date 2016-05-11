@@ -20,7 +20,7 @@ class Inventory {
     private $id; 
      /**
      * 
-     * @ORM\ManyToOne(targetEntity="Material", inversedBy="inventories")
+     * @ORM\ManyToOne(targetEntity="Material")
      * @ORM\JoinColumn(nullable=false)
      *
      */
@@ -32,11 +32,11 @@ class Inventory {
      /**
      * @ORM\Column(type="float", precision=8, scale=2, nullable=false)
      */
-    private $before;
+    private $beforeInventory;
      /**
      * @ORM\Column(type="float", precision=8, scale=2, nullable=false)
      */
-    private $after;
+    private $afterInventory;
         
 
 
@@ -74,49 +74,49 @@ class Inventory {
     }
 
     /**
-     * Set before
+     * Set beforeInventory
      *
-     * @param float $before
+     * @param float $beforeInventory
      * @return Inventory
      */
-    public function setBefore($before)
+    public function setBeforeInventory($beforeInventory)
     {
-        $this->before = $before;
+        $this->beforeInventory = $beforeInventory;
 
         return $this;
     }
 
     /**
-     * Get before
+     * Get beforeInventory
      *
      * @return float 
      */
-    public function getBefore()
+    public function getBeforeInventory()
     {
-        return $this->before;
+        return $this->beforeInventory;
     }
 
     /**
-     * Set after
+     * Set afterInventory
      *
-     * @param float $after
+     * @param float $afterInventory
      * @return Inventory
      */
-    public function setAfter($after)
+    public function setAfterInventory($afterInventory)
     {
-        $this->after = $after;
+        $this->afterInventory = $afterInventory;
 
         return $this;
     }
 
     /**
-     * Get after
+     * Get afterInventory
      *
      * @return float 
      */
-    public function getAfter()
+    public function getAfterInventory()
     {
-        return $this->after;
+        return $this->afterInventory;
     }
 
 

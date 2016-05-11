@@ -23,22 +23,6 @@ class Material {
     
     /**
      * 
-     * @ORM\OneToMany(targetEntity="Consumption", mappedBy="material")
-     */
-    protected $consumptions;
-  
-    /**
-     * 
-     * @ORM\OneToMany(targetEntity="Inventory", mappedBy="material")
-     */
-    protected $inventories;
-    /**
-     * 
-     * @ORM\OneToMany(targetEntity="Receipt", mappedBy="material")
-     */
-    protected $receipts;
-    /**
-     * 
      * @ORM\ManyToOne(targetEntity="Code")
      * @ORM\JoinColumn(nullable=false)
      *

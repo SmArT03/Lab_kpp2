@@ -189,15 +189,14 @@ class ExcelController extends BaseExcelController {
         $em = $this->getEntityManager();
         $result = $em->createQueryBuilder()
                 ->select(' mat.name as matName, c.name as codeName, mat.id as matId')
-                ->from('AppBundle\Entity\Material', 'mat')
+                ->from('AppBundle\Entity\Inventory', 'inv')
+                ->innerJoin('inv.material', 'mat')
                 ->innerJoin('mat.code', 'c')
-                ->innerJoin('mat.inventories', 'inv')
                 ->where('inv.date >= :from AND inv.date <= :to')
                 ->setParameter('from', $dateStart[0])
                 ->setParameter('to', $dateStart[1])
                 ->getQuery()
                 ->getResult();
-        
         
         $resultBalanseConsumption = $em->createQueryBuilder()
                 ->select('SUM(con.quantity) as BalanseConsumptionQuantity, mat.id as matId')
@@ -231,10 +230,9 @@ class ExcelController extends BaseExcelController {
                 ->getQuery()
                 ->getResult();
 
-
         $result_receipt = $em->createQueryBuilder()
                 ->select('SUM(r.quantity) as receiptQuantity, mat.id as matId ')
-                ->addSelect('(SELECT r1.price FROM AppBundle\Entity\Receipt r1 WHERE r1.createdAt = MAX(r.createdAt) ) as lastPrice')
+                ->addSelect('(SELECT r1.price FROM AppBundle\Entity\Receipt r1 WHERE r1.material=r.material AND r1.createdAt = MAX(r.createdAt) ) as lastPrice')
                 ->from('AppBundle\Entity\Receipt', 'r')
                 ->innerJoin('r.material', 'mat')
                 ->where('r.date >= :from AND r.date <= :to')
@@ -243,7 +241,7 @@ class ExcelController extends BaseExcelController {
                 ->groupBy('r.material')
                 ->getQuery()
                 ->getResult();
-
+        
         $recQuantiy = 0;
         $recPrice = 0;
         $balPrice = 0;

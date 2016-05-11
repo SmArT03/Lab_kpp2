@@ -20,7 +20,7 @@ class Consumption {
     private $id;
      /**
      * 
-     * @ORM\ManyToOne(targetEntity="Material", inversedBy="consumptions")
+     * @ORM\ManyToOne(targetEntity="Material")
      * @ORM\JoinColumn(nullable=false)
      *
      */

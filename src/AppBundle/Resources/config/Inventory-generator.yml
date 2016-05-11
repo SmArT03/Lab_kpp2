@@ -10,10 +10,10 @@ params:
             label: Наименование материала
         date:
             label: Дата
-        before:
-            label: До
-        after:
-            label: После
+        beforeInventory:
+            label: До инвентаризации
+        afterInventory:
+            label: После инвентаризации
         createdAt:
             label: Создан
         updatedAt:
@@ -26,7 +26,7 @@ builders:
     list:
         params:
             title: Инвентаризация
-            display: [material, date, before, after, createdAt, updatedAt]
+            display: [material, date, beforeInventory, afterInventory, createdAt, updatedAt]
             actions:
                 new: ~
                 excel: ~
@@ -40,21 +40,21 @@ builders:
     new:
         params:
             title: Новая проверка
-            display: [material, date, before, after]
+            display: [material, date, beforeInventory, afterInventory]
             actions:
                 save: ~
                 list: ~
     edit:
         params:
             title: "Вы редактируете \"%object%\"|{ %object%: Inventory.material }|"
-            display: [material, date, before, after]
+            display: [material, date, beforeInventory, afterInventory]
             actions:
                 save: ~
                 list: ~
     show:
         params:
             title: "Вы просматриваете \"%object%\"|{ %object%: Inventory.material }|"
-            display: [material, date, before, after, createdAt, updatedAt]
+            display: [material, date, beforeInventory, afterInventory, createdAt, updatedAt]
             actions:
                 list: ~
                 new: ~
