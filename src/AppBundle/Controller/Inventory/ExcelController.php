@@ -1,4 +1,4 @@
-<?php
+<?php //
 
 namespace AppBundle\Controller\Inventory;
 
@@ -20,7 +20,7 @@ class ExcelController extends BaseExcelController {
      * @Route("/excel", name="excel")
      * @Method({"GET", "POST"})
      */
-    public function excelAction(Request $request) {
+    public function excelAction(Request $request, $key = null) {
 
         $form = $this->createFormBuilder()
                 ->add('dateRange', \Admingenerator\FormExtensionsBundle\Form\Type\DateRangePickerType::class, array(
@@ -66,7 +66,7 @@ class ExcelController extends BaseExcelController {
             $writer = $phpexcel->createWriter($phpExcelObject, 'Excel2007');
             $response = new StreamedResponse(
                     function () use ($writer) {
-                $tempFile = $this->get('kernel')->getCacheDir() . '/' .
+                $tempFile = sys_get_temp_dir() . '/' .
                         rand(0, getrandmax()) . rand(0, getrandmax()) . ".tmp";
                 $writer->save($tempFile);
                 readfile($tempFile);

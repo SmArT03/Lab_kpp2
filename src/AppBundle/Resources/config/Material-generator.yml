@@ -46,6 +46,10 @@ builders:
             actions:
                 save: ~
                 list: ~
+            fields: 
+                code:   
+                    addFormOptions:
+                        required: true
     show:
         params:
             title: "Вы просматриваете материал \"%object%\"|{ %object%: Material.name }|"
