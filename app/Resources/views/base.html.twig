@@ -2,7 +2,7 @@
 {% block stylesheets %}
     {{ parent() }}
 
-    {% include 'AdmingeneratorFormExtensionsBundle::stylesheets.html.twig' %}
+    {% include 'AdmingeneratorFormExtensionsBundle::stylesheets_assetic_less.html.twig' %}
     <style>
         .content-wrapper,
         .right-side,
@@ -57,7 +57,7 @@
     {% block javascripts %}
         {{ parent() }}
 
-        {% include 'AdmingeneratorFormExtensionsBundle::javascripts.html.twig' %}
+        {% include 'AdmingeneratorFormExtensionsBundle::javascripts_assetic_less.html.twig' %}
         {% if form is defined and form is not empty %}
             {{ form_js(form) }}
         {% endif %}
