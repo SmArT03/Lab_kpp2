@@ -1,43 +1,36 @@
 {% extends 'AdmingeneratorGeneratorBundle::base_uncompressed.html.twig' %}
-{% block stylesheets %}
-    {{ parent() }}
 
-    {% include 'AdmingeneratorFormExtensionsBundle::stylesheets.html.twig' %}
-    <style>
-        .content-wrapper,
-        .right-side,
-        .main-footer {
-          -webkit-transition: -webkit-transform 0.3s ease-in-out, margin 0.3s ease-in-out;
-          -moz-transition: -moz-transform 0.3s ease-in-out, margin 0.3s ease-in-out;
-          -o-transition: -o-transform 0.3s ease-in-out, margin 0.3s ease-in-out;
-          transition: transform 0.3s ease-in-out, margin 0.3s ease-in-out;
-          margin-left: 10px;
-          z-index: 820;
-        }
-    </style>
-    {% if form is defined and form is not empty %}
-        {{ form_css(form) }}
-    {% endif %}
-{% endblock %}
 
 {% block title %}MRP{% endblock %}
 
 {% block brand_text %}MRP{% endblock %}
 
-{% block html_body_tag %}
-    <body class="skin-blue sidebar-mini">
-{% endblock html_body_tag %}
 
-{% block body_content %}
+{% block stylesheets %}
+    {{ parent() }}
 
-    {% block wrapper_content %}
+    {% include 'AdmingeneratorFormExtensionsBundle::stylesheets.html.twig' %}
+   
+    {% if form is defined and form is not empty %}
+        {{ form_css(form) }}
+    {% endif %}
+{% endblock %}
 
-        {% block sidebar %}
-                {% include "AdmingeneratorGeneratorBundle:Sidebar:layout.html.twig" %}
-            </aside>
-        {% endblock sidebar %}
+{% block javascripts %}
+  {{ parent() }}
 
-        {% block page %}
+  {% include 'AdmingeneratorFormExtensionsBundle::javascripts.html.twig' %}
+  {% if form is defined and form is not empty %}
+    {{ form_js(form) }}
+  {% endif %}
+{% endblock %}
+    
+
+    {% block header %}
+        
+    {% endblock header %}
+
+{% block page %}
             <aside class="content-wrapper">
                 {% block page_header %}
                 <section class="content-header">
@@ -50,16 +43,5 @@
                 </section>
             </aside>
         {% endblock page %}
-    {% endblock wrapper_content %}
 
-        {# Wrapper end #}
-        </div>
-    {% block javascripts %}
-        {{ parent() }}
 
-        {% include 'AdmingeneratorFormExtensionsBundle::javascripts.html.twig' %}
-        {% if form is defined and form is not empty %}
-            {{ form_js(form) }}
-        {% endif %}
-    {% endblock %}
-{% endblock body_content %}

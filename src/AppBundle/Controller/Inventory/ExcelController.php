@@ -192,9 +192,9 @@ class ExcelController extends BaseExcelController {
                 ->from('AppBundle\Entity\Inventory', 'inv')
                 ->innerJoin('inv.material', 'mat')
                 ->innerJoin('mat.code', 'c')
-                ->where('inv.date >= :from AND inv.date <= :to')
-                ->setParameter('from', $dateStart[0])
-                ->setParameter('to', $dateStart[1])
+//                ->where('inv.date >= :from AND inv.date <= :to')
+//                ->setParameter('from', $dateStart[0])
+//                ->setParameter('to', $dateStart[1])
                 ->getQuery()
                 ->getResult();
         
@@ -202,9 +202,21 @@ class ExcelController extends BaseExcelController {
                 ->select('SUM(con.quantity) as BalanseConsumptionQuantity, mat.id as matId')
                 ->from('AppBundle\Entity\Consumption', 'con')
                 ->innerJoin('con.material', 'mat')
-                ->where('con.date <= :from ')
+                ->where('con.date < :from ')
                 ->setParameter('from', $dateStart[0])
                 ->groupBy('con.material')
+                ->getQuery()
+                ->getResult();
+        
+        $resultInventory = $em->createQueryBuilder()
+                ->select('inv.afterInventory as lastInventory, mat.id as matId')
+                ->from('AppBundle\Entity\Inventory', 'inv')
+                ->innerJoin('inv.material', 'mat')
+                ->where('inv.date < :from ')
+                ->andWhere('inv.afterInventory = (SELECT MAX(inv1.afterInventory) FROM AppBundle\Entity\Inventory inv1 WHERE inv1.date <= :from AND inv1.material = inv.material)')
+                ->orderBy('inv.date, inv.id','DESC')
+                ->setParameter('from', $dateStart[0])
+                ->groupBy('inv.material')
                 ->getQuery()
                 ->getResult();
 
@@ -212,7 +224,7 @@ class ExcelController extends BaseExcelController {
                 ->select('SUM(r.quantity) as BalanseReceiptQuantity, mat.id as matId ')
                 ->from('AppBundle\Entity\Receipt', 'r')
                 ->innerJoin('r.material', 'mat')
-                ->where('r.date <= :from')
+                ->where('r.date < :from')
                 ->setParameter('from', $dateStart[0])
                 ->groupBy('r.material')
                 ->getQuery()
@@ -232,7 +244,7 @@ class ExcelController extends BaseExcelController {
 
         $result_receipt = $em->createQueryBuilder()
                 ->select('SUM(r.quantity) as receiptQuantity, mat.id as matId ')
-                ->addSelect('(SELECT r1.price FROM AppBundle\Entity\Receipt r1 WHERE r1.material=r.material AND r1.createdAt = MAX(r.createdAt) ) as lastPrice')
+                ->addSelect('(SELECT r1.price FROM AppBundle\Entity\Receipt r1 WHERE r1.material=r.material AND r1.date = MAX(r.date) ORDER BY r1.date, r1.id DESC) as lastPrice')
                 ->from('AppBundle\Entity\Receipt', 'r')
                 ->innerJoin('r.material', 'mat')
                 ->where('r.date >= :from AND r.date <= :to')
@@ -242,6 +254,20 @@ class ExcelController extends BaseExcelController {
                 ->getQuery()
                 ->getResult();
         
+        $result_receipt_price = $em->createQueryBuilder()
+                ->select('r.price as lastPrice, mat.id as matId ')
+                ->from('AppBundle\Entity\Receipt', 'r')
+                ->innerJoin('r.material', 'mat')
+                ->where('r.date >= :from AND r.date <= :to')
+                ->andWhere('r.date = (SELECT MAX(r1.date) FROM AppBundle\Entity\Receipt r1 WHERE r1.material = r.material)')
+                ->orderBy('r.date, r.id','DESC')
+                ->setParameter('from', $dateStart[0])
+                ->setParameter('to', $dateStart[1])
+                ->groupBy('r.material')            
+                ->getQuery()
+                ->getResult();
+               
+             
         $recQuantiy = 0;
         $recPrice = 0;
         $balPrice = 0;
@@ -265,12 +291,22 @@ class ExcelController extends BaseExcelController {
                 $arr[$material['matId']]['groupName'] =0;
                 $arr[$material['matId']]['BalanseReceiptQuantity'] =0;
                 $arr[$material['matId']]['BalanseConsumptionQuantity'] =0;
+                $arr[$material['matId']]['lastInventory'] =0;
                 
             }
+            foreach ($result_receipt_price as $receiptPrice){
+                if($receiptPrice['matId'] == $material['matId']){
+                    $arr[$material['matId']]['lastPrice'] = $receiptPrice['lastPrice'];
+                }
+            }
+            foreach ($resultInventory as $inventory){
+                if($inventory['matId'] == $material['matId']){
+                    $arr[$material['matId']]['lastInventory'] = $inventory['lastInventory'];
+                }
+            }          
             foreach ($result_receipt as $receipt){
                 if($receipt['matId'] == $material['matId']){
                     $arr[$material['matId']]['receiptQuantity'] = $receipt['receiptQuantity'];
-                    $arr[$material['matId']]['lastPrice'] = $receipt['lastPrice'];
                 }
             }  
             foreach ($result_consumption as $consumption){
@@ -292,8 +328,8 @@ class ExcelController extends BaseExcelController {
         }
          $i=0;
         foreach ($arr as $value){
-            $sheet->setCellValue('F' . $row, $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]);
-            $sheet->setCellValue('G' . $row, ($value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]) * $value["lastPrice"]);
+            $sheet->setCellValue('F' . $row, $value["lastInventory"] + $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]);
+            $sheet->setCellValue('G' . $row, ($value["lastInventory"] + $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]) * $value["lastPrice"]);
 
             $balance+=$value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"];
             $balPrice+=($value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]) * $value["lastPrice"];
@@ -309,15 +345,15 @@ class ExcelController extends BaseExcelController {
             $sheet->setCellValue('I' . $row, $value["lastPrice"] * $value["receiptQuantity"]);
             $sheet->setCellValue('J' . $row, $value["consumptionQuantity"]);
             $sheet->setCellValue('K' . $row, $value["lastPrice"] * $value["consumptionQuantity"]);
-            $sheet->setCellValue('L' . $row, $value["receiptQuantity"] - $value["consumptionQuantity"]);
-            $sheet->setCellValue('M' . $row, $value["lastPrice"] * ($value["receiptQuantity"] - $value["consumptionQuantity"]));
+            $sheet->setCellValue('L' . $row, $value["lastInventory"] + $value["receiptQuantity"] - $value["consumptionQuantity"]);
+            $sheet->setCellValue('M' . $row, $value["lastPrice"] * ($value["lastInventory"] + $value["receiptQuantity"] - $value["consumptionQuantity"]));
 
             $recQuantiy+=$value["receiptQuantity"];
             $recPrice+=$value["lastPrice"] * $value["receiptQuantity"];
             $conQuantity+=$value["consumptionQuantity"];
             $conPrice+=$value["lastPrice"] * $value["consumptionQuantity"];
-            $balanceForPeriod+=$value["receiptQuantity"] - $value["consumptionQuantity"];
-            $residuePrice+=$value["lastPrice"] * ($value["receiptQuantity"] - $value["consumptionQuantity"]);
+            $balanceForPeriod+=$value["lastInventory"] + $value["receiptQuantity"] - $value["consumptionQuantity"];
+            $residuePrice+=$value["lastPrice"] * ($value["lastInventory"] + $value["receiptQuantity"] - $value["consumptionQuantity"]);
             $i++;
             $row++;
         }

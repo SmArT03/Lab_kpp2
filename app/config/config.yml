@@ -20,6 +20,8 @@ framework:
     validation:      { enable_annotations: true }
     #serializer:      { enable_annotations: true }
     assets:
+        base_urls:
+            - 'http://10.10.5.138:8055/'
         packages:
             admingenerator_css:
               version: 1.0
@@ -55,7 +57,12 @@ assetic:
     use_controller: false
 #    bundles:        [] # comment this line to include all bundles by default
     filters:
-        cssrewrite: ~
+        cssrewrite:
+            apply_to: ["\.css$", "\.less$"]
+        uglifyjs2:
+            bin: /usr/local/bin/uglifyjs
+        uglifycss:
+            bin: /usr/local/bin/uglifycss
 
 
 # Doctrine Configuration
@@ -99,7 +106,7 @@ admingenerator_generator:
     use_propel:           false
     use_doctrine_orm:     true
     use_doctrine_odm:     false
-
+    knp_menu_alias: admingen_sidebar
     # add this line if you want to use assetic
     base_admin_template: ::base.html.twig
     twig:
@@ -113,20 +120,24 @@ admingenerator_form_extensions:
     include_blueimp: true
     include_momentjs: true
     include_jqueryui: true
-    
+        
 knp_menu:
-    twig:
-        template: "AdmingeneratorGeneratorBundle:KnpMenu:knp_menu_trans.html.twig"
+    twig:  # use "twig: false" to disable the Twig extension and the TwigRenderer
+        template: AdmingeneratorGeneratorBundle:KnpMenu:knp_menu_trans.html.twig
+
+    templating: false # if true, enables the helper for PHP templates
+    default_renderer: twig # The renderer to use, list is also available by default
 
 services:
-    app.demo_menu_builder:
-        class: Admingenerator\DashboardDemoBundle\Menu\DashboardMenuBuilder
-        arguments:
-            - "@knp_menu.factory"
-            - "@security.authorization_checker"
-            - "@request_stack"
-        tags:
-            - { name: "knp_menu.menu_builder", method: "navbarMenu", alias: "demo_navbar"}
+  common.menu_builder:
+    class: AppBundle\Menu\MenuBuilder
+    arguments:
+      - "@knp_menu.factory"
+      - "@request_stack"
+      - 'AppBundle_Material_list'
+    tags:
+      - { name: "knp_menu.menu_builder", method: "sidebarMenu", alias: "admingen_sidebar"}
+
             
 
 

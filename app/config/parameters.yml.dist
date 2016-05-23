@@ -1,6 +1,6 @@
 
 parameters:
-    database_host:     172.29.0.5
+    database_host:     mysql
     database_port:     null
     database_name:     accounting
     database_user:     admin

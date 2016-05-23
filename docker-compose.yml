@@ -1,17 +1,17 @@
 version: "2"
 
 services:
-    php:
+    fpm:
         image: nitra/php
         volumes:
             - .:/var/www
  
     nginx:
-        image: nitra/nginx
+        image: nitra/nginx:cors
         ports:
             - 8055:80
         volumes_from:
-            - php:ro
+            - fpm:ro
 
     mysql:
         image: nitra/mariadb
