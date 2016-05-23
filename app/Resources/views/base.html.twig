@@ -9,8 +9,21 @@
 {% block stylesheets %}
     {{ parent() }}
 
-    {% include 'AdmingeneratorFormExtensionsBundle::stylesheets.html.twig' %}
+{#    {% include 'AdmingeneratorFormExtensionsBundle::stylesheets.html.twig' %}#}
    
+    {% include 'AdmingeneratorFormExtensionsBundle::stylesheets_assetic_less.html.twig' %}
+{#    <style>
+        .content-wrapper,
+        .right-side,
+        .main-footer {
+          -webkit-transition: -webkit-transform 0.3s ease-in-out, margin 0.3s ease-in-out;
+          -moz-transition: -moz-transform 0.3s ease-in-out, margin 0.3s ease-in-out;
+          -o-transition: -o-transform 0.3s ease-in-out, margin 0.3s ease-in-out;
+          transition: transform 0.3s ease-in-out, margin 0.3s ease-in-out;
+          margin-left: 10px;
+          z-index: 820;
+        }
+    </style>#}
     {% if form is defined and form is not empty %}
         {{ form_css(form) }}
     {% endif %}
@@ -19,12 +32,16 @@
 {% block javascripts %}
   {{ parent() }}
 
-  {% include 'AdmingeneratorFormExtensionsBundle::javascripts.html.twig' %}
+  {#{% include 'AdmingeneratorFormExtensionsBundle::javascripts.html.twig' %}
   {% if form is defined and form is not empty %}
     {{ form_js(form) }}
   {% endif %}
-{% endblock %}
-    
+{% endblock %}#}    
+        {% include 'AdmingeneratorFormExtensionsBundle::javascripts_assetic_less.html.twig' %}
+        {% if form is defined and form is not empty %}
+            {{ form_js(form) }}
+        {% endif %}
+    {% endblock %}
 
     {% block header %}
         
