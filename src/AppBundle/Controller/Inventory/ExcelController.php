@@ -244,7 +244,6 @@ class ExcelController extends BaseExcelController {
 
         $result_receipt = $em->createQueryBuilder()
                 ->select('SUM(r.quantity) as receiptQuantity, mat.id as matId ')
-                ->addSelect('(SELECT r1.price FROM AppBundle\Entity\Receipt r1 WHERE r1.material=r.material AND r1.date = MAX(r.date) ORDER BY r1.date, r1.id DESC) as lastPrice')
                 ->from('AppBundle\Entity\Receipt', 'r')
                 ->innerJoin('r.material', 'mat')
                 ->where('r.date >= :from AND r.date <= :to')
