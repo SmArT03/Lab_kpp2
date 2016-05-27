@@ -247,11 +247,19 @@ class ExcelController extends BaseExcelController {
                 ->getQuery()
                 ->getResult();
 
-        $result_consumption = $em->createQueryBuilder()
-                ->select('SUM(con.quantity) as consumptionQuantity, gr.name as groupName, mat.id as matId')
+        $result_group = $em->createQueryBuilder()
+                ->select('gr.name as groupName, mat.id as matId')
                 ->from('AppBundle\Entity\Consumption', 'con')
                 ->innerJoin('con.material', 'mat')
                 ->innerJoin('con.group', 'gr')
+                ->groupBy('con.material')
+                ->getQuery()
+                ->getResult();
+        
+        $result_consumption = $em->createQueryBuilder()
+                ->select('SUM(con.quantity) as consumptionQuantity, mat.id as matId')
+                ->from('AppBundle\Entity\Consumption', 'con')
+                ->innerJoin('con.material', 'mat')
                 ->where('con.date >= :from AND con.date <= :to')
                 ->setParameter('from', $dateStart[0])
                 ->setParameter('to', $dateStart[1])
@@ -336,10 +344,14 @@ class ExcelController extends BaseExcelController {
                     $arr[$material['matId']]['receiptQuantity'] = $receipt['receiptQuantity'];
                 }
             }  
+            foreach ($result_group as $group){
+                if($group['matId'] == $material['matId']){
+                    $arr[$material['matId']]['groupName'] = $group['groupName'];
+                }
+            }
             foreach ($result_consumption as $consumption){
                 if($consumption['matId'] == $material['matId']){
                     $arr[$material['matId']]['consumptionQuantity'] = $consumption['consumptionQuantity'];
-                    $arr[$material['matId']]['groupName'] = $consumption['groupName'];
                 }
             }
             foreach ($resultBalanseReceipt as $Balansereceipt){
