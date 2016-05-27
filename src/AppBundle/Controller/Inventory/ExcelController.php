@@ -109,43 +109,31 @@ class ExcelController extends BaseExcelController {
         $translator = $this->get('translator');
 
         $colNum = 1;
-        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans(" № ", array(), 'Admin'), true);
+        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans("  №  ", array(), 'Admin'), true);
         $columnLetter = \PHPExcel_Cell::stringFromColumnIndex($colNum);
         $sheet->getStyle($columnLetter . '1')->getFont()->setBold(true);
         $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
 
         $colNum++;
-        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans(" Группа ЗИП ", array(), 'Admin'), true);
+        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans("  Группа ЗИП  ", array(), 'Admin'), true);
         $columnLetter = \PHPExcel_Cell::stringFromColumnIndex($colNum);
         $sheet->getStyle($columnLetter . '1')->getFont()->setBold(true);
         $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
 
         $colNum++;
-        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans(" Код ЗИП ", array(), 'Admin'), true);
+        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans("  Код ЗИП  ", array(), 'Admin'), true);
         $columnLetter = \PHPExcel_Cell::stringFromColumnIndex($colNum);
         $sheet->getStyle($columnLetter . '1')->getFont()->setBold(true);
         $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
 
         $colNum++;
-        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans(" Наименование ", array(), 'Admin'), true);
+        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans("  Наименование  ", array(), 'Admin'), true);
         $columnLetter = \PHPExcel_Cell::stringFromColumnIndex($colNum);
         $sheet->getStyle($columnLetter . '1')->getFont()->setBold(true);
         $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
 
         $colNum++;
-        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans(" ост. Начало периода ", array(), 'Admin'), true);
-        $columnLetter = \PHPExcel_Cell::stringFromColumnIndex($colNum);
-        $sheet->getStyle($columnLetter . '1')->getFont()->setBold(true);
-        $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
-
-        $colNum++;
-        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans("  $  ", array(), 'Admin'), true);
-        $columnLetter = \PHPExcel_Cell::stringFromColumnIndex($colNum);
-        $sheet->getStyle($columnLetter . '1')->getFont()->setBold(true);
-        $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
-
-        $colNum++;
-        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans(" приход ", array(), 'Admin'), true);
+        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans("  ост. Начало периода  ", array(), 'Admin'), true);
         $columnLetter = \PHPExcel_Cell::stringFromColumnIndex($colNum);
         $sheet->getStyle($columnLetter . '1')->getFont()->setBold(true);
         $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
@@ -157,7 +145,7 @@ class ExcelController extends BaseExcelController {
         $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
 
         $colNum++;
-        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans(" расход ", array(), 'Admin'), true);
+        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans("  приход  ", array(), 'Admin'), true);
         $columnLetter = \PHPExcel_Cell::stringFromColumnIndex($colNum);
         $sheet->getStyle($columnLetter . '1')->getFont()->setBold(true);
         $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
@@ -169,7 +157,25 @@ class ExcelController extends BaseExcelController {
         $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
 
         $colNum++;
-        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans(" остаток ", array(), 'Admin'), true);
+        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans("  расход  ", array(), 'Admin'), true);
+        $columnLetter = \PHPExcel_Cell::stringFromColumnIndex($colNum);
+        $sheet->getStyle($columnLetter . '1')->getFont()->setBold(true);
+        $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
+
+        $colNum++;
+        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans("  $  ", array(), 'Admin'), true);
+        $columnLetter = \PHPExcel_Cell::stringFromColumnIndex($colNum);
+        $sheet->getStyle($columnLetter . '1')->getFont()->setBold(true);
+        $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
+
+        $colNum++;
+        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans("   инвентаризация   ", array(), 'Admin'), true);
+        $columnLetter = \PHPExcel_Cell::stringFromColumnIndex($colNum);
+        $sheet->getStyle($columnLetter . '1')->getFont()->setBold(true);
+        $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
+        
+        $colNum++;
+        $sheet->setCellValueByColumnAndRow($colNum, 1, $translator->trans("  остаток  ", array(), 'Admin'), true);
         $columnLetter = \PHPExcel_Cell::stringFromColumnIndex($colNum);
         $sheet->getStyle($columnLetter . '1')->getFont()->setBold(true);
         $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
@@ -189,12 +195,8 @@ class ExcelController extends BaseExcelController {
         $em = $this->getEntityManager();
         $result = $em->createQueryBuilder()
                 ->select(' mat.name as matName, c.name as codeName, mat.id as matId')
-                ->from('AppBundle\Entity\Inventory', 'inv')
-                ->innerJoin('inv.material', 'mat')
+                ->from('AppBundle\Entity\Material', 'mat')
                 ->innerJoin('mat.code', 'c')
-//                ->where('inv.date >= :from AND inv.date <= :to')
-//                ->setParameter('from', $dateStart[0])
-//                ->setParameter('to', $dateStart[1])
                 ->getQuery()
                 ->getResult();
         
@@ -208,18 +210,33 @@ class ExcelController extends BaseExcelController {
                 ->getQuery()
                 ->getResult();
         
+        
         $resultInventory = $em->createQueryBuilder()
-                ->select('inv.afterInventory as lastInventory, mat.id as matId')
+                ->select('inv.afterInventory as afterInventory,inv.beforeInventory as beforeInventory, mat.id as matId')
                 ->from('AppBundle\Entity\Inventory', 'inv')
                 ->innerJoin('inv.material', 'mat')
                 ->where('inv.date < :from ')
-                ->andWhere('inv.afterInventory = (SELECT MAX(inv1.afterInventory) FROM AppBundle\Entity\Inventory inv1 WHERE inv1.date <= :from AND inv1.material = inv.material)')
+                ->andWhere('inv.beforeInventory = (SELECT MAX(inv1.beforeInventory) FROM AppBundle\Entity\Inventory inv1 WHERE inv1.date <= :from AND inv1.material = inv.material)')
+                ->andWhere('inv.afterInventory = (SELECT MAX(inv2.afterInventory) FROM AppBundle\Entity\Inventory inv2 WHERE inv2.date <= :from AND inv2.material = inv.material)')
                 ->orderBy('inv.date, inv.id','DESC')
                 ->setParameter('from', $dateStart[0])
                 ->groupBy('inv.material')
                 ->getQuery()
                 ->getResult();
-
+        
+        $resultInventoryForPeriod = $em->createQueryBuilder()
+                ->select('inv.afterInventory as afterInventoryForPeriod, inv.beforeInventory as beforeInventoryForPeriod, mat.id as matId')
+                ->from('AppBundle\Entity\Inventory', 'inv')
+                ->innerJoin('inv.material', 'mat')
+                ->where('inv.date >= :from AND inv.date <= :to')
+                ->andWhere('inv.afterInventory = (SELECT MAX(inv1.afterInventory) FROM AppBundle\Entity\Inventory inv1 WHERE inv1.date >= :from AND inv1.date <= :to AND inv1.material = inv.material)')
+                ->andWhere('inv.beforeInventory = (SELECT MAX(inv2.beforeInventory) FROM AppBundle\Entity\Inventory inv2 WHERE inv2.date >= :from AND inv2.date <= :to AND inv2.material = inv.material)')
+                ->orderBy('inv.date, inv.id','DESC')
+                ->setParameter('from', $dateStart[0])
+                ->setParameter('to', $dateStart[1])
+                ->groupBy('inv.material')
+                ->getQuery()
+                ->getResult();
         $resultBalanseReceipt = $em->createQueryBuilder()
                 ->select('SUM(r.quantity) as BalanseReceiptQuantity, mat.id as matId ')
                 ->from('AppBundle\Entity\Receipt', 'r')
@@ -257,11 +274,11 @@ class ExcelController extends BaseExcelController {
                 ->select('r.price as lastPrice, mat.id as matId ')
                 ->from('AppBundle\Entity\Receipt', 'r')
                 ->innerJoin('r.material', 'mat')
-                ->where('r.date >= :from AND r.date <= :to')
+//                ->where('r.date >= :from AND r.date <= :to')
                 ->andWhere('r.date = (SELECT MAX(r1.date) FROM AppBundle\Entity\Receipt r1 WHERE r1.material = r.material)')
                 ->orderBy('r.date, r.id','DESC')
-                ->setParameter('from', $dateStart[0])
-                ->setParameter('to', $dateStart[1])
+//                ->setParameter('from', $dateStart[0])
+//                ->setParameter('to', $dateStart[1])
                 ->groupBy('r.material')            
                 ->getQuery()
                 ->getResult();
@@ -275,6 +292,7 @@ class ExcelController extends BaseExcelController {
         $conQuantity = 0;
         $balanceForPeriod = 0;
         $balance = 0;
+        $lastInventoryForPeriod=0;
         
         
         $arr = array();
@@ -290,7 +308,10 @@ class ExcelController extends BaseExcelController {
                 $arr[$material['matId']]['groupName'] =0;
                 $arr[$material['matId']]['BalanseReceiptQuantity'] =0;
                 $arr[$material['matId']]['BalanseConsumptionQuantity'] =0;
-                $arr[$material['matId']]['lastInventory'] =0;
+                $arr[$material['matId']]['afterInventory'] =0;
+                $arr[$material['matId']]['beforeInventory'] =0;
+                $arr[$material['matId']]['afterInventoryForPeriod'] =0;
+                $arr[$material['matId']]['beforeInventoryForPeriod'] =0;
                 
             }
             foreach ($result_receipt_price as $receiptPrice){
@@ -298,9 +319,16 @@ class ExcelController extends BaseExcelController {
                     $arr[$material['matId']]['lastPrice'] = $receiptPrice['lastPrice'];
                 }
             }
+            foreach ($resultInventoryForPeriod as $inventoryForPeriod){
+                if($inventoryForPeriod['matId'] == $material['matId']){
+                    $arr[$material['matId']]['afterInventoryForPeriod'] = $inventoryForPeriod['afterInventoryForPeriod'];
+                    $arr[$material['matId']]['beforeInventoryForPeriod'] = $inventoryForPeriod['beforeInventoryForPeriod'];
+                }
+            }  
             foreach ($resultInventory as $inventory){
                 if($inventory['matId'] == $material['matId']){
-                    $arr[$material['matId']]['lastInventory'] = $inventory['lastInventory'];
+                    $arr[$material['matId']]['afterInventory'] = $inventory['afterInventory'];
+                    $arr[$material['matId']]['beforeInventory'] = $inventory['beforeInventory'];
                 }
             }          
             foreach ($result_receipt as $receipt){
@@ -315,23 +343,24 @@ class ExcelController extends BaseExcelController {
                 }
             }
             foreach ($resultBalanseReceipt as $Balansereceipt){
-                if($receipt['matId'] == $material['matId']){
+                if($Balansereceipt['matId'] == $material['matId']){
                     $arr[$material['matId']]['BalanseReceiptQuantity'] = $Balansereceipt['BalanseReceiptQuantity'];
                 }
             }
             foreach ($resultBalanseConsumption as $BalanseConsumption){
-                if($receipt['matId'] == $material['matId']){
+                if($BalanseConsumption['matId'] == $material['matId']){
                     $arr[$material['matId']]['BalanseConsumptionQuantity'] = $BalanseConsumption['BalanseConsumptionQuantity'];
                 }
             }
         }
          $i=0;
+//         var_dump($arr);die;
         foreach ($arr as $value){
-            $sheet->setCellValue('F' . $row, $value["lastInventory"] + $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]);
-            $sheet->setCellValue('G' . $row, ($value["lastInventory"] + $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]) * $value["lastPrice"]);
+            $sheet->setCellValue('F' . $row, ($value["afterInventory"]-$value["beforeInventory"]) + $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]);
+            $sheet->setCellValue('G' . $row, (($value["afterInventory"]-$value["beforeInventory"]) + $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]) * $value["lastPrice"]);
 
-            $balance+=$value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"];
-            $balPrice+=($value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]) * $value["lastPrice"];
+            $balance+=($value["afterInventory"]-$value["beforeInventory"])+$value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"];
+            $balPrice+=(($value["afterInventory"]-$value["beforeInventory"]) + $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]) * $value["lastPrice"];
 
             $id = $i + 1;
             $sheet->setCellValue('B' . $row, $id);
@@ -344,15 +373,17 @@ class ExcelController extends BaseExcelController {
             $sheet->setCellValue('I' . $row, $value["lastPrice"] * $value["receiptQuantity"]);
             $sheet->setCellValue('J' . $row, $value["consumptionQuantity"]);
             $sheet->setCellValue('K' . $row, $value["lastPrice"] * $value["consumptionQuantity"]);
-            $sheet->setCellValue('L' . $row, $value["lastInventory"] + $value["receiptQuantity"] - $value["consumptionQuantity"]);
-            $sheet->setCellValue('M' . $row, $value["lastPrice"] * ($value["lastInventory"] + $value["receiptQuantity"] - $value["consumptionQuantity"]));
+            $sheet->setCellValue('L' . $row, $value["afterInventoryForPeriod"]);
+            $sheet->setCellValue('M' . $row, ($value["afterInventoryForPeriod"]-$value["beforeInventoryForPeriod"]) +($value["afterInventory"]-$value["beforeInventory"]) + $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"] + $value["receiptQuantity"] - $value["consumptionQuantity"]);
+            $sheet->setCellValue('N' . $row, $value["lastPrice"] * (($value["afterInventoryForPeriod"]-$value["beforeInventoryForPeriod"]) +($value["afterInventory"]-$value["beforeInventory"]) + $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"] + $value["receiptQuantity"] - $value["consumptionQuantity"]));
 
             $recQuantiy+=$value["receiptQuantity"];
             $recPrice+=$value["lastPrice"] * $value["receiptQuantity"];
             $conQuantity+=$value["consumptionQuantity"];
             $conPrice+=$value["lastPrice"] * $value["consumptionQuantity"];
-            $balanceForPeriod+=$value["lastInventory"] + $value["receiptQuantity"] - $value["consumptionQuantity"];
-            $residuePrice+=$value["lastPrice"] * ($value["lastInventory"] + $value["receiptQuantity"] - $value["consumptionQuantity"]);
+            $lastInventoryForPeriod+=$value["afterInventoryForPeriod"];
+            $balanceForPeriod+=($value["afterInventoryForPeriod"]-$value["beforeInventoryForPeriod"]) +($value["afterInventory"]-$value["beforeInventory"])+ $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"]+ $value["receiptQuantity"] - $value["consumptionQuantity"];
+            $residuePrice+=$value["lastPrice"] * (($value["afterInventoryForPeriod"]-$value["beforeInventoryForPeriod"]) +($value["afterInventory"]-$value["beforeInventory"]) + $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"] + $value["receiptQuantity"] - $value["consumptionQuantity"]);
             $i++;
             $row++;
         }
@@ -363,8 +394,9 @@ class ExcelController extends BaseExcelController {
         $sheet->setCellValue('I' . $row, $recPrice);
         $sheet->setCellValue('J' . $row, $conQuantity);
         $sheet->setCellValue('K' . $row, $conPrice);
-        $sheet->setCellValue('L' . $row, $balanceForPeriod);
-        $sheet->setCellValue('M' . $row, $residuePrice);
+        $sheet->setCellValue('L' . $row, $lastInventoryForPeriod);        
+        $sheet->setCellValue('M' . $row, $balanceForPeriod);
+        $sheet->setCellValue('N' . $row, $residuePrice);
 
 
 

@@ -47,6 +47,10 @@ builders:
             actions:
                 save: ~
                 list: ~
+            fields: 
+                description:   
+                    addFormOptions:
+                        required: false
     edit:
         params:
             title: "Вы редактируете приход для \"%object%\"|{ %object%: Receipt.material }|"
@@ -54,6 +58,10 @@ builders:
             actions:
                 save: ~
                 list: ~
+            fields: 
+                description:   
+                    addFormOptions:
+                        required: false
     show:
         params:
             title: "Вы просматриваете приход для \"%object%\"|{ %object%: Receipt.material }|"

@@ -3,6 +3,7 @@
 
 namespace AppBundle\Entity;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 /**
@@ -33,6 +34,7 @@ class Material {
      * @ORM\Column(type="string", length=255, nullable=false)
      */
     private $name;
+    
     
     public function __toString() {
         return $this->name;
