@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity
  * @ORM\Table()
@@ -31,6 +32,10 @@ class Receipt {
 
     /**
      * @ORM\Column(type="integer", nullable=false)
+     * @Assert\Range(
+     *      min = 0,
+     *      minMessage = "Введенное значение должно быть больше 0"
+     * )
      */
     private $quantity;
     /**
@@ -40,10 +45,12 @@ class Receipt {
 
      /**
      * @ORM\Column(type="date", nullable=false)
+     *   
+     * @Assert\Date()
      */
     private $date;
     /**
-     * @ORM\Column(type="string", nullable=true , length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $description;
     

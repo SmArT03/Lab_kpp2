@@ -14,6 +14,7 @@ params:
             label: Количество
         date:
             label: Дата
+            formType: Admingenerator\FormExtensionsBundle\Form\Type\DatePickerType 
         description:
             label: Описание
         createdAt:

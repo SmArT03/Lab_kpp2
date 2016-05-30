@@ -34,7 +34,7 @@ class Inventory {
      */
     private $beforeInventory;
      /**
-     * @ORM\Column(type="float", precision=8, scale=2, nullable=false)
+     * @ORM\Column(type="float", precision=2, scale=8, nullable=false)
      */
     private $afterInventory;
         

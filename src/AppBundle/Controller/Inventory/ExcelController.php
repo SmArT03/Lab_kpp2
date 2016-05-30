@@ -385,7 +385,7 @@ class ExcelController extends BaseExcelController {
             $sheet->setCellValue('I' . $row, $value["lastPrice"] * $value["receiptQuantity"]);
             $sheet->setCellValue('J' . $row, $value["consumptionQuantity"]);
             $sheet->setCellValue('K' . $row, $value["lastPrice"] * $value["consumptionQuantity"]);
-            $sheet->setCellValue('L' . $row, $value["afterInventoryForPeriod"]);
+            $sheet->setCellValue('L' . $row, $value["afterInventoryForPeriod"]- $value["beforeInventoryForPeriod"]);
             $sheet->setCellValue('M' . $row, ($value["afterInventoryForPeriod"]-$value["beforeInventoryForPeriod"]) +($value["afterInventory"]-$value["beforeInventory"]) + $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"] + $value["receiptQuantity"] - $value["consumptionQuantity"]);
             $sheet->setCellValue('N' . $row, $value["lastPrice"] * (($value["afterInventoryForPeriod"]-$value["beforeInventoryForPeriod"]) +($value["afterInventory"]-$value["beforeInventory"]) + $value["BalanseReceiptQuantity"] - $value["BalanseConsumptionQuantity"] + $value["receiptQuantity"] - $value["consumptionQuantity"]));
 

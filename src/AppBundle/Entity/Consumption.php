@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -34,6 +35,10 @@ class Consumption {
     protected $group;
     /**
      * @ORM\Column(type="integer", nullable=false)
+     * @Assert\Range(
+     *      min = 0,
+     *      minMessage = "Введенное значение должно быть больше 0"
+     * )
      */
     private $quantity;
     
@@ -44,7 +49,7 @@ class Consumption {
     private $date;
     
     /**
-     * @ORM\Column(type="string", nullable=true , length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $description;
     
