@@ -21,7 +21,7 @@ framework:
     #serializer:      { enable_annotations: true }
     assets:
         base_urls:
-            - 'http://10.10.5.138:8055/'
+            - %base_urls%
         packages:
             admingenerator_css:
               version: 1.0
