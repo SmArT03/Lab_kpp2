@@ -34,8 +34,13 @@ class Material {
      */
     private $name;
     
+    
     public function __toString() {
-        return $this->name;
+        try {
+            return (string) $this->name;
+        } catch (Exception $exception) {
+            return '';
+        }
     }
 
     /**
