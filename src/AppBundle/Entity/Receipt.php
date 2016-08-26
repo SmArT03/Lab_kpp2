@@ -9,8 +9,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity
- * @ORM\Table()
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
+ * @ORM\Table()
  */
 class Receipt {
 
@@ -28,7 +28,7 @@ class Receipt {
     /**
      * 
      * @ORM\ManyToOne(targetEntity="Material", inversedBy="receipts")
-     * @ORM\JoinColumn(nullable=false, onDelete="RESTRICT")
+     * @ORM\JoinColumn(nullable=false)
      *
      */
     protected $material;
@@ -164,7 +164,13 @@ class Receipt {
      */
     public function getMaterial()
     {
-        return $this->material;
+         try {
+            if (($this->material) && ($this->material->__toString())) {
+                return $this->material;
+            }
+        } catch (\Exception $e) {
+            return "Материал удален";
+        }
     }
 
     /**

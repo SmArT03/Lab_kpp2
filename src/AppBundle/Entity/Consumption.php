@@ -9,8 +9,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity
- * @ORM\Table()
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
+ * @ORM\Table()
  */
 class Consumption {
     use \Gedmo\Timestampable\Traits\TimestampableEntity,
@@ -25,14 +25,14 @@ class Consumption {
      /**
      * 
      * @ORM\ManyToOne(targetEntity="Material")
-     * @ORM\JoinColumn(nullable=false, onDelete="RESTRICT")
+     * @ORM\JoinColumn(nullable=false)
      *
      */
     protected $material;
      /**
      * 
      * @ORM\ManyToOne(targetEntity="Group")
-     * @ORM\JoinColumn(nullable=false, onDelete="RESTRICT")
+     * @ORM\JoinColumn(nullable=false)
      *
      */
     protected $group;
@@ -136,7 +136,13 @@ class Consumption {
      */
     public function getMaterial()
     {
-        return $this->material;
+        try {
+            if (($this->material) && ($this->material->__toString())) {
+                return $this->material;
+            }
+        } catch (\Exception $e) {
+            return "Материал удален";
+        }
     }
 
     /**
@@ -159,7 +165,13 @@ class Consumption {
      */
     public function getGroup()
     {
-        return $this->group;
+        try {
+            if (($this->group) && ($this->group->__toString())) {
+                return $this->group;
+            }
+        } catch (\Exception $e) {
+            return "Группа удалена";
+        }
     }
 
     /**

@@ -8,8 +8,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity
- * @ORM\Table()
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
+ * @ORM\Table()
  */
 class Inventory {
     use \Gedmo\Timestampable\Traits\TimestampableEntity,
@@ -24,7 +24,7 @@ class Inventory {
      /**
      * 
      * @ORM\ManyToOne(targetEntity="Material")
-     * @ORM\JoinColumn(nullable=false, onDelete="RESTRICT")
+     * @ORM\JoinColumn(nullable=false)
      *
      */
     protected $material;
@@ -144,6 +144,12 @@ class Inventory {
      */
     public function getMaterial()
     {
-        return $this->material;
+        try {
+            if (($this->material) && ($this->material->__toString())) {
+                return $this->material;
+            }
+        } catch (\Exception $e) {
+            return "Материал удален";
+        }
     }
 }

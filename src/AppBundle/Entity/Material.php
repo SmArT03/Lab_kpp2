@@ -25,7 +25,7 @@ class Material {
     /**
      * 
      * @ORM\ManyToOne(targetEntity="Code")
-     * @ORM\JoinColumn(nullable=false, onDelete="RESTRICT")
+     * @ORM\JoinColumn(nullable=false)
      *
      */
     protected $code;
@@ -102,7 +102,7 @@ class Material {
                 return $this->code;
             }
         } catch (\Exception $e) {
-            return "код удален";
+            return "Kод удален";
         }
     }
     /**
