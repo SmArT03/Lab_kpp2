@@ -115,6 +115,12 @@ admingenerator_generator:
         datetime_format: 'yyyy-MM-dd HH:mm'
         localized_date_format: "medium"
         localized_datetime_format: "medium"
+    filter_types:
+      doctrine_orm:
+        datetime: Admingenerator\FormExtensionsBundle\Form\Type\DateTimePickerType
+        date:  Admingenerator\FormExtensionsBundle\Form\Type\DatePickerType
+        entity: Admingenerator\FormExtensionsBundle\Form\Type\Select2EntityType
+        choice: Admingenerator\FormExtensionsBundle\Form\Type\Select2ChoiceType
         
 admingenerator_form_extensions:
     include_blueimp: true

@@ -25,7 +25,7 @@ class Material {
     /**
      * 
      * @ORM\ManyToOne(targetEntity="Code")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="RESTRICT")
      *
      */
     protected $code;
@@ -97,7 +97,13 @@ class Material {
      */
     public function getCode()
     {
-        return $this->code;
+        try {
+            if (($this->code) && ($this->code->__toString())) {
+                return $this->code;
+            }
+        } catch (\Exception $e) {
+            return "код удален";
+        }
     }
     /**
      * Constructor

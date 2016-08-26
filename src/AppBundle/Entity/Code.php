@@ -2,11 +2,15 @@
 
 namespace AppBundle\Entity;
 
+
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity
  * @ORM\Table()
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
 class Code {
     use \Gedmo\Timestampable\Traits\TimestampableEntity,
@@ -23,6 +27,7 @@ class Code {
      * @ORM\Column(type="string", length=255, nullable=false)
      */
     private $name;
+    
     
 
     public function __toString() {
@@ -59,5 +64,6 @@ class Code {
     public function getName()
     {
         return $this->name;
+
     }
 }

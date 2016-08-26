@@ -2,11 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity
  * @ORM\Table()
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
 class Inventory {
     use \Gedmo\Timestampable\Traits\TimestampableEntity,
@@ -21,7 +24,7 @@ class Inventory {
      /**
      * 
      * @ORM\ManyToOne(targetEntity="Material")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="RESTRICT")
      *
      */
     protected $material;

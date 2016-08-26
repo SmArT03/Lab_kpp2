@@ -28,6 +28,8 @@ builders:
             object_actions:
                 edit: ~
                 delete: ~
+            filters: [name, code]
+            filtersMode: top
     excel:
         params: ~
         filename: ~

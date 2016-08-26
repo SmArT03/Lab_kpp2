@@ -2,12 +2,15 @@
 
 namespace AppBundle\Entity;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity
  * @ORM\Table()
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
 class Consumption {
     use \Gedmo\Timestampable\Traits\TimestampableEntity,
@@ -22,14 +25,14 @@ class Consumption {
      /**
      * 
      * @ORM\ManyToOne(targetEntity="Material")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="RESTRICT")
      *
      */
     protected $material;
      /**
      * 
      * @ORM\ManyToOne(targetEntity="Group")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="RESTRICT")
      *
      */
     protected $group;
