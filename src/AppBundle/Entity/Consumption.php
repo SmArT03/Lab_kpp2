@@ -2,10 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  * @ORM\Table()
  */
 class Consumption {
@@ -34,6 +38,10 @@ class Consumption {
     protected $group;
     /**
      * @ORM\Column(type="integer", nullable=false)
+     * @Assert\Range(
+     *      min = 0,
+     *      minMessage = "Введенное значение должно быть больше 0"
+     * )
      */
     private $quantity;
     
@@ -44,7 +52,7 @@ class Consumption {
     private $date;
     
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $description;
     
@@ -128,7 +136,13 @@ class Consumption {
      */
     public function getMaterial()
     {
-        return $this->material;
+        try {
+            if (($this->material) && ($this->material->__toString())) {
+                return $this->material;
+            }
+        } catch (\Exception $e) {
+            return "Материал удален";
+        }
     }
 
     /**
@@ -151,7 +165,13 @@ class Consumption {
      */
     public function getGroup()
     {
-        return $this->group;
+        try {
+            if (($this->group) && ($this->group->__toString())) {
+                return $this->group;
+            }
+        } catch (\Exception $e) {
+            return "Группа удалена";
+        }
     }
 
     /**

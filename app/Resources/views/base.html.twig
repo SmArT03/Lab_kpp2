@@ -24,7 +24,7 @@
           z-index: 820;
         }
     </style>#}
-    {% if form is defined and form is not empty %}
+   {% if form is defined and form is not empty %}
         {{ form_css(form) }}
     {% endif %}
 {% endblock %}
@@ -32,11 +32,6 @@
 {% block javascripts %}
   {{ parent() }}
 
-  {#{% include 'AdmingeneratorFormExtensionsBundle::javascripts.html.twig' %}
-  {% if form is defined and form is not empty %}
-    {{ form_js(form) }}
-  {% endif %}
-{% endblock %}#}    
         {% include 'AdmingeneratorFormExtensionsBundle::javascripts_assetic_less.html.twig' %}
         {% if form is defined and form is not empty %}
             {{ form_js(form) }}
@@ -60,5 +55,17 @@
                 </section>
             </aside>
         {% endblock page %}
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -3,6 +3,7 @@
 
 namespace AppBundle\Entity;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 /**
@@ -96,7 +97,13 @@ class Material {
      */
     public function getCode()
     {
-        return $this->code;
+        try {
+            if (($this->code) && ($this->code->__toString())) {
+                return $this->code;
+            }
+        } catch (\Exception $e) {
+            return "Kод удален";
+        }
     }
     /**
      * Constructor

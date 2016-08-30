@@ -12,8 +12,10 @@ params:
             label: Количество
         price:
             label: Цена
+            formType: Admingenerator\FormExtensionsBundle\Form\Type\MoneyType
         date:
             label: Дата
+            formType: Admingenerator\FormExtensionsBundle\Form\Type\DatePickerType            
         description:
             label: Описание
         createdAt:
@@ -36,6 +38,8 @@ builders:
             object_actions:
                 edit: ~
                 delete: ~
+            filters: [material, quantity, price, date, description, supplier]
+            filtersMode: top
     excel:
         params: ~
         filename: ~
@@ -43,17 +47,25 @@ builders:
     new:
         params:
             title: Новый приход
-            display: [quantity, material, price, date, description, supplier]
+            display: [ material, quantity, price, date, description, supplier]
             actions:
                 save: ~
                 list: ~
+            fields: 
+                description:   
+                    addFormOptions:
+                        required: false
     edit:
         params:
             title: "Вы редактируете приход для \"%object%\"|{ %object%: Receipt.material }|"
-            display: [quantity, material, price, date, description, supplier]
+            display: [ material, quantity, price, date, description, supplier]
             actions:
                 save: ~
                 list: ~
+            fields: 
+                description:   
+                    addFormOptions:
+                        required: false
     show:
         params:
             title: "Вы просматриваете приход для \"%object%\"|{ %object%: Receipt.material }|"

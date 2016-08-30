@@ -2,10 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
+use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  * @ORM\Table()
  */
 class Receipt {
@@ -31,6 +35,10 @@ class Receipt {
 
     /**
      * @ORM\Column(type="integer", nullable=false)
+     * @Assert\Range(
+     *      min = 0,
+     *      minMessage = "Введенное значение должно быть больше 0"
+     * )
      */
     private $quantity;
     /**
@@ -40,10 +48,12 @@ class Receipt {
 
      /**
      * @ORM\Column(type="date", nullable=false)
+     *   
+     * @Assert\Date()
      */
     private $date;
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $description;
     
@@ -154,7 +164,13 @@ class Receipt {
      */
     public function getMaterial()
     {
-        return $this->material;
+         try {
+            if (($this->material) && ($this->material->__toString())) {
+                return $this->material;
+            }
+        } catch (\Exception $e) {
+            return "Материал удален";
+        }
     }
 
     /**
