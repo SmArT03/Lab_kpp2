@@ -2,10 +2,13 @@
 
 namespace AppBundle\Entity;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  * @ORM\Table()
  */
 class Inventory {
@@ -141,6 +144,12 @@ class Inventory {
      */
     public function getMaterial()
     {
-        return $this->material;
+        try {
+            if (($this->material) && ($this->material->__toString())) {
+                return $this->material;
+            }
+        } catch (\Exception $e) {
+            return "Материал удален";
+        }
     }
 }

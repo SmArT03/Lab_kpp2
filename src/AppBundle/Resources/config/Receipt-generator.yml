@@ -38,6 +38,8 @@ builders:
             object_actions:
                 edit: ~
                 delete: ~
+            filters: [material, quantity, price, date, description, supplier]
+            filtersMode: top
     excel:
         params: ~
         filename: ~

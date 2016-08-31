@@ -33,7 +33,9 @@ builders:
                 excel: ~
             object_actions:
                 edit: ~
-                delete: ~
+                delete: ~            
+            filters:  [material, date, beforeInventory, afterInventory]
+            filtersMode: top
     excel:
         params: ~
         filename: ~

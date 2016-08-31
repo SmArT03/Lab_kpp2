@@ -97,7 +97,13 @@ class Material {
      */
     public function getCode()
     {
-        return $this->code;
+        try {
+            if (($this->code) && ($this->code->__toString())) {
+                return $this->code;
+            }
+        } catch (\Exception $e) {
+            return "Kод удален";
+        }
     }
     /**
      * Constructor
