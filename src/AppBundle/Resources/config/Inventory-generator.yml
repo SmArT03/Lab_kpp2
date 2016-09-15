@@ -10,7 +10,6 @@ params:
             label: Наименование материала
         date:
             label: Дата
-            formType: Admingenerator\FormExtensionsBundle\Form\Type\DatePickerType 
         beforeInventory:
             label: До инвентаризации
         afterInventory:
