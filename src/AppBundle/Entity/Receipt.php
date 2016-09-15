@@ -32,7 +32,6 @@ class Receipt {
      *
      */
     protected $material;
-
     /**
      * @ORM\Column(type="integer", nullable=false)
      * @Assert\Range(
@@ -45,7 +44,6 @@ class Receipt {
      * @ORM\Column(type="decimal", precision=8, scale=2, nullable=false)
      */
     private $price;
-
      /**
      * @ORM\Column(type="date", nullable=false)
      *   
@@ -62,6 +60,13 @@ class Receipt {
      */
     private $supplier;
 
+   /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->material = new \Doctrine\Common\Collections\ArrayCollection();
+    }
     public function __toString() {
         return $this->description;
     }
@@ -110,7 +115,7 @@ class Receipt {
 
         return $this;
     }
-
+    
     /**
      * Get price
      *
@@ -150,7 +155,7 @@ class Receipt {
      * @param \AppBundle\Entity\Material $material
      * @return Receipt
      */
-    public function setMaterial(\AppBundle\Entity\Material $material)
+    public function setMaterial(\AppBundle\Entity\Material $material= null)
     {
         $this->material = $material;
 

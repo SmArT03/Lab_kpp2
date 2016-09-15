@@ -6,9 +6,11 @@ namespace AppBundle\Entity;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\VarDumper\VarDumper;
+
 /**
- * @ORM\Entity
  * @ORM\Table()
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\MaterialRepository")
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
 class Material {
@@ -21,6 +23,7 @@ class Material {
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
     
     /**
      * 
@@ -30,20 +33,31 @@ class Material {
      */
     protected $code;
     
+    protected $balance;
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
      */
     private $name;
-    
-    
+    /**
+     * @ORM\OneToMany(targetEntity="Inventory", mappedBy="material")
+     */
+    protected $inventories;
+    /**
+     * @ORM\OneToMany(targetEntity="Receipt", mappedBy="material")
+     */
+    protected $receipts;
+    /**
+     * @ORM\OneToMany(targetEntity="Consumption", mappedBy="material")
+     */
+    protected $consumptions;
+
     public function __toString() {
         try {
-            return (string) $this->name;
+            return (string) '('. $this->getCode()->__toString() . ')'. $this->getName();
         } catch (Exception $exception) {
             return '';
         }
-    }
-
+    }    
     /**
      * Get id
      *
@@ -76,7 +90,27 @@ class Material {
     {
         return $this->name;
     }
-
+    /**
+     * Get balance
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getBalance()
+    {
+        $rec=$this->receipts->toArray();
+        $cons=$this->consumptions->toArray();
+        $invent=$this->inventories->toArray();
+        $sumReceipt=0;  $sumConsumption=0;   $lastInventory=0;
+        for ($i=0; $i<count($rec);$i++){
+            $sumReceipt+=$rec[$i]->getQuantity();
+        }
+        for ($i=0; $i<count($cons);$i++){
+            $sumConsumption+=$cons[$i]->getQuantity();
+        }
+        $lastInventory=$invent[count($invent)-1]->getAfterInventory()-$invent[count($invent)-1]->getBeforeInventory();
+        $balance=$lastInventory+$sumReceipt-$sumConsumption;
+        return $balance;
+    }
     /**
      * Set code
      *
@@ -89,7 +123,6 @@ class Material {
 
         return $this;
     }
-
     /**
      * Get code
      *
@@ -105,12 +138,15 @@ class Material {
             return "Kод удален";
         }
     }
+
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->consumptions = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->receipts = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->inventories = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -179,8 +215,6 @@ class Material {
         return $this->receipts;
     }
     
-   
-
     /**
      * Add inventories
      *
