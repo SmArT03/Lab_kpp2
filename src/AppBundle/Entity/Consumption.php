@@ -13,29 +13,34 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Table()
  */
 class Consumption {
+
     use \Gedmo\Timestampable\Traits\TimestampableEntity,
         \Gedmo\Blameable\Traits\BlameableEntity,
         \Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-     /**
+
+    /**
      * 
      * @ORM\ManyToOne(targetEntity="Material", inversedBy="consumptions")
      * @ORM\JoinColumn(nullable=false)
      *
      */
     protected $material;
-     /**
+
+    /**
      * 
      * @ORM\ManyToOne(targetEntity="Group")
      * @ORM\JoinColumn(nullable=false)
      *
      */
     protected $group;
+
     /**
      * @ORM\Column(type="integer", nullable=false)
      * @Assert\Range(
@@ -44,29 +49,27 @@ class Consumption {
      * )
      */
     private $quantity;
-    
 
-     /**
+    /**
      * @ORM\Column(type="date", nullable=false)
      */
     private $date;
-    
+
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $description;
-    
-    
+
     public function __toString() {
         return $this->description;
     }
+
     /**
      * Get id
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -76,8 +79,7 @@ class Consumption {
      * @param integer $quantity
      * @return Consumption
      */
-    public function setQuantity($quantity)
-    {
+    public function setQuantity($quantity) {
         $this->quantity = $quantity;
 
         return $this;
@@ -88,8 +90,7 @@ class Consumption {
      *
      * @return integer 
      */
-    public function getQuantity()
-    {
+    public function getQuantity() {
         return $this->quantity;
     }
 
@@ -99,8 +100,7 @@ class Consumption {
      * @param string $description
      * @return Consumption
      */
-    public function setDescription($description)
-    {
+    public function setDescription($description) {
         $this->description = $description;
 
         return $this;
@@ -111,8 +111,7 @@ class Consumption {
      *
      * @return string 
      */
-    public function getDescription()
-    {
+    public function getDescription() {
         return $this->description;
     }
 
@@ -122,8 +121,7 @@ class Consumption {
      * @param \AppBundle\Entity\Material $material
      * @return Consumption
      */
-    public function setMaterial(\AppBundle\Entity\Material $material)
-    {
+    public function setMaterial(\AppBundle\Entity\Material $material) {
         $this->material = $material;
 
         return $this;
@@ -134,8 +132,7 @@ class Consumption {
      *
      * @return \AppBundle\Entity\Material 
      */
-    public function getMaterial()
-    {
+    public function getMaterial() {
         try {
             if (($this->material) && ($this->material->__toString())) {
                 return $this->material;
@@ -151,8 +148,7 @@ class Consumption {
      * @param \AppBundle\Entity\Group $group
      * @return Consumption
      */
-    public function setGroup(\AppBundle\Entity\Group $group)
-    {
+    public function setGroup(\AppBundle\Entity\Group $group) {
         $this->group = $group;
 
         return $this;
@@ -163,8 +159,7 @@ class Consumption {
      *
      * @return \AppBundle\Entity\Group 
      */
-    public function getGroup()
-    {
+    public function getGroup() {
         try {
             if (($this->group) && ($this->group->__toString())) {
                 return $this->group;
@@ -180,8 +175,7 @@ class Consumption {
      * @param \DateTime $date
      * @return Consumption
      */
-    public function setDate($date)
-    {
+    public function setDate($date) {
         $this->date = $date;
 
         return $this;
@@ -192,8 +186,8 @@ class Consumption {
      *
      * @return \DateTime 
      */
-    public function getDate()
-    {
+    public function getDate() {
         return $this->date;
     }
+
 }

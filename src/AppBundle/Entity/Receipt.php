@@ -5,8 +5,8 @@ namespace AppBundle\Entity;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-
 use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * @ORM\Entity
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
@@ -32,6 +32,7 @@ class Receipt {
      *
      */
     protected $material;
+
     /**
      * @ORM\Column(type="integer", nullable=false)
      * @Assert\Range(
@@ -40,33 +41,36 @@ class Receipt {
      * )
      */
     private $quantity;
+
     /**
      * @ORM\Column(type="decimal", precision=8, scale=2, nullable=false)
      */
     private $price;
-     /**
+
+    /**
      * @ORM\Column(type="date", nullable=false)
      *   
      * @Assert\Date()
      */
     private $date;
+
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $description;
-    
+
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $supplier;
 
-   /**
+    /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->material = new \Doctrine\Common\Collections\ArrayCollection();
     }
+
     public function __toString() {
         return $this->description;
     }
@@ -76,18 +80,17 @@ class Receipt {
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
-      /**
+
+    /**
      * Set quantity
      *
      * @param integer $quantity
      * @return Consumption
      */
-    public function setQuantity($quantity)
-    {
+    public function setQuantity($quantity) {
         $this->quantity = $quantity;
 
         return $this;
@@ -98,8 +101,7 @@ class Receipt {
      *
      * @return integer 
      */
-    public function getQuantity()
-    {
+    public function getQuantity() {
         return $this->quantity;
     }
 
@@ -109,20 +111,18 @@ class Receipt {
      * @param string $price
      * @return Receipt
      */
-    public function setPrice($price)
-    {
+    public function setPrice($price) {
         $this->price = $price;
 
         return $this;
     }
-    
+
     /**
      * Get price
      *
      * @return string 
      */
-    public function getPrice()
-    {
+    public function getPrice() {
         return $this->price;
     }
 
@@ -132,8 +132,7 @@ class Receipt {
      * @param string $description
      * @return Receipt
      */
-    public function setDescription($description)
-    {
+    public function setDescription($description) {
         $this->description = $description;
 
         return $this;
@@ -144,8 +143,7 @@ class Receipt {
      *
      * @return string 
      */
-    public function getDescription()
-    {
+    public function getDescription() {
         return $this->description;
     }
 
@@ -155,8 +153,7 @@ class Receipt {
      * @param \AppBundle\Entity\Material $material
      * @return Receipt
      */
-    public function setMaterial(\AppBundle\Entity\Material $material= null)
-    {
+    public function setMaterial(\AppBundle\Entity\Material $material = null) {
         $this->material = $material;
 
         return $this;
@@ -167,9 +164,8 @@ class Receipt {
      *
      * @return \AppBundle\Entity\Material 
      */
-    public function getMaterial()
-    {
-         try {
+    public function getMaterial() {
+        try {
             if (($this->material) && ($this->material->__toString())) {
                 return $this->material;
             }
@@ -184,8 +180,7 @@ class Receipt {
      * @param string $supplier
      * @return Receipt
      */
-    public function setSupplier($supplier)
-    {
+    public function setSupplier($supplier) {
         $this->supplier = $supplier;
 
         return $this;
@@ -196,8 +191,7 @@ class Receipt {
      *
      * @return string 
      */
-    public function getSupplier()
-    {
+    public function getSupplier() {
         return $this->supplier;
     }
 
@@ -207,8 +201,7 @@ class Receipt {
      * @param \DateTime $date
      * @return Receipt
      */
-    public function setDate($date)
-    {
+    public function setDate($date) {
         $this->date = $date;
 
         return $this;
@@ -219,8 +212,8 @@ class Receipt {
      *
      * @return \DateTime 
      */
-    public function getDate()
-    {
+    public function getDate() {
         return $this->date;
     }
+
 }
