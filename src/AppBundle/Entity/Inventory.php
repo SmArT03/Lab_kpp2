@@ -12,44 +12,47 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Table()
  */
 class Inventory {
+
     use \Gedmo\Timestampable\Traits\TimestampableEntity,
         \Gedmo\Blameable\Traits\BlameableEntity,
         \Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id; 
-     /**
+    private $id;
+
+    /**
      * 
-     * @ORM\ManyToOne(targetEntity="Material")
+     * @ORM\ManyToOne(targetEntity="Material", inversedBy="inventories")
      * @ORM\JoinColumn(nullable=false)
      *
      */
     protected $material;
-     /**
+
+    /**
      * @ORM\Column(type="date", nullable=false)
      */
     private $date;
-     /**
+
+    /**
      * @ORM\Column(type="float", precision=8, scale=2, nullable=false)
      */
     private $beforeInventory;
-     /**
+
+    /**
      * @ORM\Column(type="float", precision=2, scale=8, nullable=false)
      */
     private $afterInventory;
-        
-
 
     /**
      * Get id
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -59,8 +62,7 @@ class Inventory {
      * @param integer $date
      * @return Inventory
      */
-    public function setDate($date)
-    {
+    public function setDate($date) {
         $this->date = $date;
 
         return $this;
@@ -71,8 +73,7 @@ class Inventory {
      *
      * @return integer 
      */
-    public function getDate()
-    {
+    public function getDate() {
         return $this->date;
     }
 
@@ -82,8 +83,7 @@ class Inventory {
      * @param float $beforeInventory
      * @return Inventory
      */
-    public function setBeforeInventory($beforeInventory)
-    {
+    public function setBeforeInventory($beforeInventory) {
         $this->beforeInventory = $beforeInventory;
 
         return $this;
@@ -94,8 +94,7 @@ class Inventory {
      *
      * @return float 
      */
-    public function getBeforeInventory()
-    {
+    public function getBeforeInventory() {
         return $this->beforeInventory;
     }
 
@@ -105,8 +104,7 @@ class Inventory {
      * @param float $afterInventory
      * @return Inventory
      */
-    public function setAfterInventory($afterInventory)
-    {
+    public function setAfterInventory($afterInventory) {
         $this->afterInventory = $afterInventory;
 
         return $this;
@@ -117,12 +115,9 @@ class Inventory {
      *
      * @return float 
      */
-    public function getAfterInventory()
-    {
+    public function getAfterInventory() {
         return $this->afterInventory;
     }
-
-
 
     /**
      * Set material
@@ -130,8 +125,7 @@ class Inventory {
      * @param \AppBundle\Entity\Material $material
      * @return Inventory
      */
-    public function setMaterial(\AppBundle\Entity\Material $material)
-    {
+    public function setMaterial(\AppBundle\Entity\Material $material) {
         $this->material = $material;
 
         return $this;
@@ -142,8 +136,7 @@ class Inventory {
      *
      * @return \AppBundle\Entity\Material 
      */
-    public function getMaterial()
-    {
+    public function getMaterial() {
         try {
             if (($this->material) && ($this->material->__toString())) {
                 return $this->material;
@@ -152,4 +145,5 @@ class Inventory {
             return "Материал удален";
         }
     }
+
 }

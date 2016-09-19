@@ -1,27 +1,29 @@
 <?php
 
-
 namespace AppBundle\Entity;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+
 /**
- * @ORM\Entity
  * @ORM\Table()
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\MaterialRepository")
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
 class Material {
+
     use \Gedmo\Timestampable\Traits\TimestampableEntity,
         \Gedmo\Blameable\Traits\BlameableEntity,
         \Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-    
+
     /**
      * 
      * @ORM\ManyToOne(targetEntity="Code")
@@ -29,16 +31,30 @@ class Material {
      *
      */
     protected $code;
-    
+
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
      */
     private $name;
-    
-    
+
+    /**
+     * @ORM\OneToMany(targetEntity="Inventory", mappedBy="material")
+     */
+    protected $inventories;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Receipt", mappedBy="material")
+     */
+    protected $receipts;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Consumption", mappedBy="material")
+     */
+    protected $consumptions;
+
     public function __toString() {
         try {
-            return (string) $this->name;
+            return (string) '(' . $this->getCode()->__toString() . ')' . $this->getName();
         } catch (Exception $exception) {
             return '';
         }
@@ -49,8 +65,7 @@ class Material {
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -60,8 +75,7 @@ class Material {
      * @param string $name
      * @return Material
      */
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;
@@ -72,9 +86,31 @@ class Material {
      *
      * @return string 
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
+    }
+
+    /**
+     * Get balance
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getBalance() {
+        $rec = $this->receipts->toArray();
+        $cons = $this->consumptions->toArray();
+        $invent = $this->inventories->toArray();
+        $sumReceipt = 0;
+        $sumConsumption = 0;
+        $lastInventory = 0;
+        for ($i = 0; $i < count($rec); $i++) {
+            $sumReceipt+=$rec[$i]->getQuantity();
+        }
+        for ($i = 0; $i < count($cons); $i++) {
+            $sumConsumption+=$cons[$i]->getQuantity();
+        }
+        $lastInventory = $invent[count($invent) - 1]->getAfterInventory() - $invent[count($invent) - 1]->getBeforeInventory();
+        $balance = $lastInventory + $sumReceipt - $sumConsumption;
+        return $balance;
     }
 
     /**
@@ -83,8 +119,7 @@ class Material {
      * @param \AppBundle\Entity\Code $code
      * @return Material
      */
-    public function setCode(\AppBundle\Entity\Code $code)
-    {
+    public function setCode(\AppBundle\Entity\Code $code) {
         $this->code = $code;
 
         return $this;
@@ -95,8 +130,7 @@ class Material {
      *
      * @return \AppBundle\Entity\Code 
      */
-    public function getCode()
-    {
+    public function getCode() {
         try {
             if (($this->code) && ($this->code->__toString())) {
                 return $this->code;
@@ -105,12 +139,14 @@ class Material {
             return "Kод удален";
         }
     }
+
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->consumptions = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->receipts = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->inventories = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -119,8 +155,7 @@ class Material {
      * @param \AppBundle\Entity\Consumption $consumptions
      * @return Material
      */
-    public function addConsumption(\AppBundle\Entity\Consumption $consumptions)
-    {
+    public function addConsumption(\AppBundle\Entity\Consumption $consumptions) {
         $this->consumptions[] = $consumptions;
 
         return $this;
@@ -131,8 +166,7 @@ class Material {
      *
      * @param \AppBundle\Entity\Consumption $consumptions
      */
-    public function removeConsumption(\AppBundle\Entity\Consumption $consumptions)
-    {
+    public function removeConsumption(\AppBundle\Entity\Consumption $consumptions) {
         $this->consumptions->removeElement($consumptions);
     }
 
@@ -141,8 +175,7 @@ class Material {
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getConsumptions()
-    {
+    public function getConsumptions() {
         return $this->consumptions;
     }
 
@@ -152,8 +185,7 @@ class Material {
      * @param \AppBundle\Entity\Receipt $receipts
      * @return Material
      */
-    public function addReceipt(\AppBundle\Entity\Receipt $receipts)
-    {
+    public function addReceipt(\AppBundle\Entity\Receipt $receipts) {
         $this->receipts[] = $receipts;
 
         return $this;
@@ -164,8 +196,7 @@ class Material {
      *
      * @param \AppBundle\Entity\Receipt $receipts
      */
-    public function removeReceipt(\AppBundle\Entity\Receipt $receipts)
-    {
+    public function removeReceipt(\AppBundle\Entity\Receipt $receipts) {
         $this->receipts->removeElement($receipts);
     }
 
@@ -174,12 +205,9 @@ class Material {
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getReceipts()
-    {
+    public function getReceipts() {
         return $this->receipts;
     }
-    
-   
 
     /**
      * Add inventories
@@ -187,8 +215,7 @@ class Material {
      * @param \AppBundle\Entity\Consumption $inventories
      * @return Material
      */
-    public function addInventory(\AppBundle\Entity\Consumption $inventories)
-    {
+    public function addInventory(\AppBundle\Entity\Consumption $inventories) {
         $this->inventories[] = $inventories;
 
         return $this;
@@ -199,8 +226,7 @@ class Material {
      *
      * @param \AppBundle\Entity\Consumption $inventories
      */
-    public function removeInventory(\AppBundle\Entity\Consumption $inventories)
-    {
+    public function removeInventory(\AppBundle\Entity\Consumption $inventories) {
         $this->inventories->removeElement($inventories);
     }
 
@@ -209,8 +235,8 @@ class Material {
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getInventories()
-    {
+    public function getInventories() {
         return $this->inventories;
     }
+
 }
