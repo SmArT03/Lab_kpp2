@@ -7,7 +7,8 @@ params:
     pk_requirement: ~
     fields:
         material:
-            label: Наименование материала
+            label:  Наименование материала
+            formType: Admingenerator\FormExtensionsBundle\Form\Type\Select2EntityType
         quantity:
             label: Количество
         price:
