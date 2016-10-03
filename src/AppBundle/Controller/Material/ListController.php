@@ -8,7 +8,5 @@ use Admingenerated\AppBundle\BaseMaterialController\ListController as BaseListCo
  * ListController
  */
 class ListController extends BaseListController {
-
- 
-
+    
 }

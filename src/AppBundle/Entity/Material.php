@@ -8,7 +8,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Table()
- * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\MaterialRepository")
+ * @ORM\Entity
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
 class Material {
@@ -101,7 +101,6 @@ class Material {
         $invent = $this->inventories->toArray();
         $sumReceipt = 0;
         $sumConsumption = 0;
-        $lastInventory = 0;
         for ($i = 0; $i < count($rec); $i++) {
             $sumReceipt+=$rec[$i]->getQuantity();
         }
