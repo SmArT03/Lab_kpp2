@@ -20,8 +20,6 @@ framework:
     validation:      { enable_annotations: true }
     #serializer:      { enable_annotations: true }
     assets:
-        base_urls:
-            - %base_urls%
         packages:
             admingenerator_css:
               version: 1.0
@@ -91,6 +89,12 @@ doctrine:
             class: Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
             enabled: true
 
+doctrine_migrations:
+    dir_name: "%kernel.root_dir%/DoctrineMigrations"
+    namespace: Application\Migrations
+    table_name: migration_versions
+    name: Application Migrations
+    
 # Swiftmailer Configuration
 swiftmailer:
     transport: "%mailer_transport%"

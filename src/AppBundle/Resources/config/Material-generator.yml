@@ -10,6 +10,7 @@ params:
             label: Имя
         balance:
             label: Остаток
+            
         code:
             label: Код ЗИП
         createdAt:
@@ -25,6 +26,9 @@ builders:
         params:
             title: Материалы
             display: [name, balance, code, createdAt, updatedAt]
+            fields:
+                balance:
+                    sortable: false
             actions:
                 new: ~
             object_actions:
