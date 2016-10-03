@@ -101,13 +101,16 @@ class Material {
         $invent = $this->inventories->toArray();
         $sumReceipt = 0;
         $sumConsumption = 0;
+        $lastInventory=0;
         for ($i = 0; $i < count($rec); $i++) {
             $sumReceipt+=$rec[$i]->getQuantity();
         }
         for ($i = 0; $i < count($cons); $i++) {
             $sumConsumption+=$cons[$i]->getQuantity();
         }
-        $lastInventory = $invent[count($invent) - 1]->getAfterInventory() - $invent[count($invent) - 1]->getBeforeInventory();
+        if (count($invent)!=0){
+            $lastInventory = $invent[count($invent) - 1]->getAfterInventory() - $invent[count($invent) - 1]->getBeforeInventory();
+        }
         $balance = $lastInventory + $sumReceipt - $sumConsumption;
         return $balance;
     }
