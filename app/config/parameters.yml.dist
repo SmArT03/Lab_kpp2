@@ -10,4 +10,3 @@ parameters:
     mailer_user: null
     mailer_password: null
     secret: 9cebb4adbb3768127755e813c5ba9250a97cd45f
-    base_urls: http://zip.mrp.nitra.ua/

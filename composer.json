@@ -26,7 +26,8 @@
         "symfony2admingenerator/form-extensions-bundle": "^2.0",
         "knplabs/knp-menu-bundle": "^2.0",
         "liuggio/excelbundle": "^2.0",
-        "symfony/finder": "^3.0"
+        "symfony/finder": "^3.0",
+        "doctrine/doctrine-migrations-bundle": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~3.0",

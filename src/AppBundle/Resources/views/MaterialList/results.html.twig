@@ -38,13 +38,14 @@
                                             </th>
                                         {% endif %}
                                     {% endblock list_thead_column_name %}
+
                                     {% block list_thead_column_balance %}        {% if (true) %}
                                             <th class="list-results-fields-header-column list-results-fields-header-column-balance{% if 1 %} sorting{% if sortColumn == 'balance' and sortOrder == 'ASC' %}_asc{% elseif sortColumn == 'balance' and sortOrder == 'DESC' %}_desc{% endif %}{% endif %}">
                                                 {% if sortColumn == 'balance' and sortOrder == 'ASC' %}
                                                     <a href="{{ path(listRoute, { 'sort': 'balance', 'order_by': 'desc'}) }}" class="">
                                                     {% else %}
                                                         <a href="{{ path(listRoute, { 'sort': 'balance', 'order_by': 'asc'}) }}" class="">
-                                                        {% endif %}{{ 'Остаток'|trans({}, 'Admin') }}</a> 
+                                                        {% endif %}{{ 'Остаток'|trans({}, 'Admin') }}</a>
                                             </th>
                                         {% endif %}
                                     {% endblock list_thead_column_balance %}
