@@ -1,0 +1,8 @@
+AppBundle_admin_app_bundle_Student:
+    resource: "@AppBundle/Controller/Student/"
+    type:     admingenerator
+    prefix:   /Student
+    
+Main:  
+    pattern:  /
+    defaults: { _controller: AppBundle:Mainpage:index }

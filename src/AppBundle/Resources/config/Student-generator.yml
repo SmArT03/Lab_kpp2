@@ -1,0 +1,77 @@
+generator: admingenerator.generator.doctrine
+params:
+    model: AppBundle\Entity\Student
+    namespace_prefix: 
+    concurrency_lock: ~
+    bundle_name: AppBundle
+    pk_requirement: ~
+    fields:
+        name:
+            label: Имя
+        subject:
+            label: Предмет
+        mark:
+            label: Количество
+        date:
+            label: Дата
+        description:
+            label: Описание
+        createdAt:
+            label: Создан
+        updatedAt:
+            label: Обновлен
+    object_actions:
+        delete: ~
+    batch_actions:
+        delete: ~
+builders:
+    list:
+        params:
+            title: Результаты экзамена
+            display: [name,subject, mark, date, description, createdAt, updatedAt]
+            actions:
+                new: ~
+            object_actions:
+                edit: ~
+                delete: ~
+            filters: [name, subject, mark, date, description]
+            filtersMode: top
+    excel:
+        params: ~
+        filename: ~
+        filetype: ~
+    new:
+        params:
+            title: Новый экзамен
+            display: [name, subject, mark, date, description]
+            actions:
+                save: ~
+                list: ~
+            fields: 
+                description:   
+                    addFormOptions:
+                        required: false
+    edit:
+        params:
+            title: "Вы редактируете экзамен для \"%object%\"|{ %object%: Student.name }|"
+            display: [name, subject, mark, date, description]
+            actions:
+                save: ~
+                list: ~
+            fields: 
+                description:   
+                    addFormOptions:
+                        required: false
+    show:
+        params:
+            title: "Вы просматриваете экзамен для \"%object%\"|{ %object%: Student.name }|"
+            display: [name, subject, mark, date, description, createdAt, updatedAt]
+            actions:
+                list: ~
+                new: ~
+    actions:
+        params:
+            object_actions:
+                delete: ~
+            batch_actions:
+                delete: ~

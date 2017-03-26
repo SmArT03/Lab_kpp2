@@ -1,0 +1,12 @@
+
+parameters:
+    database_host:     mysql
+    database_port:     null
+    database_name:     accounting
+    database_user:     admin
+    database_password: admin
+    mailer_transport:  smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
+    secret: 9cebb4adbb3768127755e813c5ba9250a97cd45f
